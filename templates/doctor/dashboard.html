@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Hub - AGEWELL Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Clinical Practice Hub</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Doctor Dashboard</h1>
+      <p class="text-secondary fs-5">Monitor assigned geriatric patients, review adherence, and update treatment protocols.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('doctor_patients') }}" class="btn-3d btn-3d-lime px-4 py-2">
+        <i class="bi bi-people-fill me-1"></i> My Patients
+      </a>
+      <a href="{{ url_for('doctor_appointments') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+        <i class="bi bi-calendar-plus me-1"></i> Schedule Visit
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <!-- Active Patients Quick Card -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 p-md-5 bg-white h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-0">Assigned Patients</h3>
+          <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold">
+            {{ patients | length }} Active
+          </span>
+        </div>
+        <p class="text-secondary small mb-4">Patients who have approved your medical access.</p>
+
+        <div class="d-flex flex-column gap-3">
+          {% for p in patients %}
+            <div class="p-3 rounded-4 border bg-white d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fw-bold text-forest-900 mb-1 fs-5">{{ p['name'] }}</h5>
+                <div class="small text-secondary">
+                  <span class="badge bg-light text-dark border me-2">Blood: {{ p['blood_group'] }}</span>
+                  <i class="bi bi-telephone text-success me-1"></i> {{ p['phone'] }}
+                </div>
+              </div>
+              <a href="{{ url_for('doctor_patient_details', senior_id=p['id']) }}" class="btn-3d btn-3d-forest py-2 px-3 fs-6">
+                Clinical Chart <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Clinic Appointments -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 p-md-5 bg-white h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-0">Upcoming Consultations</h3>
+          <a href="{{ url_for('doctor_appointments') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">View All</a>
+        </div>
+        <p class="text-secondary small mb-4">Scheduled visits and checkups with patients.</p>
+
+        <div class="d-flex flex-column gap-3">
+          {% for appt in appointments %}
+            <div class="p-3 rounded-4 border bg-white">
+              <div class="d-flex justify-content-between align-items-start mb-1">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill small fw-bold">
+                  {{ appt['appointment_date'] }} • {{ appt['appointment_time'] }}
+                </span>
+                <span class="badge bg-light text-secondary border rounded-pill small">{{ appt['status'] | title }}</span>
+              </div>
+              <h5 class="fw-bold font-serif fs-5 mb-1">{{ appt['title'] }}</h5>
+              <div class="small text-secondary"><i class="bi bi-person-fill text-success me-1"></i> Patient: <strong>{{ appt['patient_name'] }}</strong></div>
+              <div class="small text-muted"><i class="bi bi-geo-alt text-danger me-1"></i> {{ appt['location'] or 'Clinic Room' }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medical Oversight Notice (Blueprint Compliance) -->
+  <div class="card-3d card-3d-forest p-4 p-md-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8">
+        <span class="difference-badge-3d mb-3">CLINICAL GOVERNANCE</span>
+        <h2 class="font-serif fw-bold text-white fs-2 mb-2">Automated Grace Period & Adherence Surveillance</h2>
+        <p class="text-white-50 mb-0">
+          The portal continuously runs an APScheduler surveillance thread. If any patient misses a scheduled prescription dose past their custom grace period (default 30 min), or fails to submit their morning "I am OK" check-in, immediate escalation notices are dispatched to designated caregivers.
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="{{ url_for('doctor_patients') }}" class="btn-3d btn-3d-lime py-3 px-4 fs-5">
+          Review Patient Adherence <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

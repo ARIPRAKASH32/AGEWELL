@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Appointments - AGEWELL{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Clinic Schedule</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Manage Appointments</h1>
+      <p class="text-secondary fs-5">Schedule patient checkups and monitor clinic visits.</p>
+    </div>
+    <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Appointments List -->
+    <div class="col-lg-7">
+      <div class="card-3d p-4 bg-white h-100">
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-4">Scheduled Visits</h3>
+        
+        <div class="d-flex flex-column gap-3">
+          {% for appt in appointments %}
+            <div class="p-4 rounded-4 border bg-white shadow-sm">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill fw-bold">
+                  {{ appt['appointment_date'] }} at {{ appt['appointment_time'] }}
+                </span>
+                <span class="badge bg-light text-secondary border rounded-pill">{{ appt['status'] | title }}</span>
+              </div>
+              <h4 class="font-serif fw-bold fs-5 text-forest-900 mb-1">{{ appt['title'] }}</h4>
+              <div class="small text-secondary mb-1">
+                <strong>Patient:</strong> {{ appt['patient_name'] }}
+              </div>
+              <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i> {{ appt['location'] or 'Clinic Room' }}</div>
+              {% if appt['notes'] %}
+                <p class="small text-secondary bg-light p-2 rounded-3 mt-2 mb-0">{{ appt['notes'] }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule New Appointment Form -->
+    <div class="col-lg-5">
+      <div class="card-3d p-4 bg-white">
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-3">Schedule New Visit</h3>
+        
+        <form action="{{ url_for('doctor_appointments') }}" method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-secondary">Select Approved Patient</label>
+            <select name="senior_id" class="form-select bg-light border-0" required>
+              {% for p in patients %}
+                <option value="{{ p['id'] }}">{{ p['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-secondary">Appointment Title</label>
+            <input type="text" name="title" class="form-control bg-light border-0" placeholder="e.g. Quarterly BP & Heart Checkup" required>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label fw-bold small text-secondary">Date</label>
+              <input type="date" name="date" class="form-control bg-light border-0" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label fw-bold small text-secondary">Time</label>
+              <input type="text" name="time" class="form-control bg-light border-0" placeholder="10:30 AM" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-secondary">Location</label>
+            <input type="text" name="location" class="form-control bg-light border-0" placeholder="e.g. San Antonio Memorial Health, Suite 402" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold small text-secondary">Preparation Notes for Patient</label>
+            <textarea name="notes" class="form-control bg-light border-0" rows="3" placeholder="Bring current medications and daily BP log..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-3d btn-3d-lime w-100 py-3 fs-5">
+            <i class="bi bi-calendar-check-fill me-1"></i> Book Appointment
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

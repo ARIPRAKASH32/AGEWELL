@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinical Chart: {{ patient['name'] }} - Doctor Hub{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Electronic Health Record</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">{{ patient['name'] }}</h1>
+      <p class="text-secondary fs-5">Senior Profile, Medical History, Adherence Metrics, and Active Prescriptions.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('doctor_patients') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+        <i class="bi bi-arrow-left me-1"></i> Back to Roster
+      </a>
+      <a href="tel:{{ patient['phone'] }}" class="btn-3d btn-3d-lime py-2 px-4">
+        <i class="bi bi-telephone-fill me-1"></i> Contact Patient
+      </a>
+    </div>
+  </div>
+
+  <!-- ROW 1: Patient Vital Overview & 30-Day Adherence Gauge -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-7">
+      <div class="card-3d p-4 p-md-5 bg-white h-100">
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-3">Clinical Profile</h3>
+        <div class="row g-3 text-secondary mb-4">
+          <div class="col-sm-6"><strong>Date of Birth:</strong> {{ patient['date_of_birth'] or '1948-06-14' }}</div>
+          <div class="col-sm-6"><strong>Blood Group:</strong> <span class="badge bg-danger rounded-pill">{{ patient['blood_group'] or 'O+' }}</span></div>
+          <div class="col-sm-6"><strong>Phone:</strong> {{ patient['phone'] }}</div>
+          <div class="col-sm-6"><strong>Email:</strong> {{ patient['email'] }}</div>
+          <div class="col-12"><strong>Residential Address:</strong> {{ patient['address'] or 'San Antonio, TX' }}</div>
+        </div>
+
+        {% if patient['emergency_notes'] %}
+          <div class="p-4 rounded-4 bg-light border">
+            <h5 class="fw-bold text-danger mb-2"><i class="bi bi-shield-exclamation me-1"></i> Diagnoses, Alerts & Allergies</h5>
+            <p class="mb-0 text-secondary">{{ patient['emergency_notes'] }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card-3d card-3d-forest p-4 p-md-5 h-100 d-flex flex-column justify-content-between text-center">
+        <div>
+          <span class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 px-3 py-1 rounded-pill small mb-2">
+            Automated Metric
+          </span>
+          <h3 class="font-serif fw-bold text-white fs-2 mb-2">Medication Adherence</h3>
+          <p class="text-white-50 small mb-4">Percentage of scheduled doses taken within the 30-minute grace window.</p>
+        </div>
+
+        <!-- Big Adherence Number -->
+        <div class="my-3">
+          <div class="display-2 font-serif fw-bold text-lime mb-0">{{ compliance_rate }}%</div>
+          <span class="badge bg-light text-forest-900 rounded-pill px-4 py-2 fs-6 fw-bold mt-2">
+            {% if compliance_rate >= 80 %}
+              <i class="bi bi-shield-check text-success"></i> Excellent Compliance
+            {% else %}
+              <i class="bi bi-exclamation-triangle-fill text-warning"></i> Needs Clinical Review
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="small text-white-50 mt-3">
+          Calculated from all audited doses in the database.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: ACTIVE MEDICINES & UPDATE INSTRUCTIONS -->
+  <div class="card-3d p-4 p-md-5 bg-white mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+      <div>
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-1">Active Prescriptions & Regimen</h3>
+        <p class="text-secondary small mb-0">Update dosing instructions or add new pharmaceuticals.</p>
+      </div>
+      <button class="btn-3d btn-3d-lime py-2 px-4" data-bs-toggle="modal" data-bs-target="#newMedModal">
+        <i class="bi bi-plus-circle-fill me-1"></i> Prescribe New Medicine
+      </button>
+    </div>
+
+    <div class="row g-4">
+      {% for m in medicines %}
+        <div class="col-md-6">
+          <div class="p-4 rounded-4 border bg-white shadow-sm h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-bold">
+                  {{ 'Active Regimen' if m['is_active'] else 'Discontinued' }}
+                </span>
+                <span class="badge bg-light text-dark border rounded-pill">
+                  <i class="bi bi-clock me-1"></i> {{ m['timings'] }}
+                </span>
+              </div>
+              <h4 class="font-serif fw-bold fs-4 text-forest-900 mb-1">{{ m['name'] }}</h4>
+              <div class="fw-bold text-secondary mb-3">{{ m['dose'] }}</div>
+              
+              <div class="p-3 bg-light rounded-4 small text-secondary mb-3">
+                <strong>Current Instructions:</strong> {{ m['instructions'] or 'Take as directed.' }}
+              </div>
+            </div>
+
+            <!-- Edit Instructions Form -->
+            <form action="{{ url_for('doctor_patient_details', senior_id=patient['id']) }}" method="POST" class="pt-3 border-top">
+              <input type="hidden" name="action" value="update_medicine">
+              <input type="hidden" name="med_id" value="{{ m['id'] }}">
+              <div class="input-group">
+                <input type="text" name="instructions" class="form-control form-control-sm bg-light border-0" placeholder="Update instruction..." value="{{ m['instructions'] or '' }}" required>
+                <button type="submit" class="btn btn-sm btn-dark px-3 fw-bold">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ROW 3: HEALTH RECORDS & CLINICAL NOTES -->
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+      <div>
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-1">Clinical Notes & Progress Records</h3>
+        <p class="text-secondary small mb-0">Confidential medical chart documentation visible only to attending doctor and authorized caregivers.</p>
+      </div>
+      <button class="btn btn-outline-dark rounded-pill fw-bold px-4 py-2" data-bs-toggle="modal" data-bs-target="#newRecordModal">
+        <i class="bi bi-journal-plus me-1"></i> Add Clinical Note
+      </button>
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+      {% for r in records %}
+        <div class="p-4 rounded-4 border bg-light">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <h5 class="fw-bold font-serif fs-5 text-forest-900 mb-1">{{ r['title'] }}</h5>
+              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small text-uppercase">
+                {{ r['record_type'] | replace('_', ' ') }}
+              </span>
+            </div>
+            <span class="small text-muted">{{ r['created_at'] }}</span>
+          </div>
+          <p class="text-secondary mb-0 mt-2">{{ r['description'] }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Modal: Prescribe New Medicine -->
+  <div class="modal fade" id="newMedModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-serif fw-bold">Prescribe New Medicine</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="{{ url_for('doctor_patient_details', senior_id=patient['id']) }}" method="POST">
+          <input type="hidden" name="action" value="add_medicine">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Medicine Name</label>
+              <input type="text" name="name" class="form-control bg-light border-0" placeholder="e.g. Amlodipine" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Dosage</label>
+              <input type="text" name="dose" class="form-control bg-light border-0" placeholder="e.g. 5mg (1 Tablet)" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Scheduled Timings (comma-separated, 24-hr)</label>
+              <input type="text" name="timings" class="form-control bg-light border-0" placeholder="e.g. 08:00, 20:00" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Instructions for Senior</label>
+              <textarea name="instructions" class="form-control bg-light border-0" rows="3" placeholder="e.g. Take with water after morning meal."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">Save Prescription</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Clinical Note -->
+  <div class="modal fade" id="newRecordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-serif fw-bold">Add Clinical Note</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="{{ url_for('doctor_patient_details', senior_id=patient['id']) }}" method="POST">
+          <input type="hidden" name="action" value="add_record">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Note Title</label>
+              <input type="text" name="title" class="form-control bg-light border-0" placeholder="e.g. Blood Pressure Review" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Record Type</label>
+              <select name="record_type" class="form-select bg-light border-0">
+                <option value="clinical_note">Clinical Note</option>
+                <option value="diagnosis">Diagnosis</option>
+                <option value="lab_result">Lab / Blood Work Result</option>
+                <option value="vital_observation">Vital Observation</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Description & Medical Evaluation</label>
+              <textarea name="description" class="form-control bg-light border-0" rows="4" placeholder="Enter clinical assessment..." required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">Save Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

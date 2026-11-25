@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Roster - Doctor Hub{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Assigned Patients</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Patient Roster</h1>
+      <p class="text-secondary fs-5">All seniors under your medical oversight.</p>
+    </div>
+    <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <div class="row g-4">
+    {% for p in patients %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card-3d p-4 bg-white h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge {{ 'bg-success text-white' if p['is_approved'] else 'bg-warning text-dark' }} rounded-pill px-3 py-1 fw-bold">
+                {{ 'Approved Access' if p['is_approved'] else 'Pending Approval' }}
+              </span>
+              <span class="badge bg-light text-dark border rounded-pill">{{ p['blood_group'] }}</span>
+            </div>
+
+            <h3 class="font-serif fw-bold fs-4 text-forest-900 mb-1">{{ p['name'] }}</h3>
+            <div class="text-secondary small mb-3">
+              <div><i class="bi bi-envelope me-1"></i> {{ p['email'] }}</div>
+              <div><i class="bi bi-telephone me-1"></i> {{ p['phone'] }}</div>
+            </div>
+
+            {% if p['emergency_notes'] %}
+              <div class="p-3 bg-light rounded-3 small text-secondary mb-3 border">
+                <strong>Medical Notes:</strong> {{ p['emergency_notes'] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="pt-3 border-top">
+            {% if p['is_approved'] %}
+              <a href="{{ url_for('doctor_patient_details', senior_id=p['id']) }}" class="btn-3d btn-3d-forest w-100 py-2 fs-6">
+                Open Clinical Chart <i class="bi bi-arrow-right"></i>
+              </a>
+            {% else %}
+              <button class="btn btn-secondary rounded-pill w-100 py-2 disabled" disabled>
+                Awaiting Senior Approval
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
