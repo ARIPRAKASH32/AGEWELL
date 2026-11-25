@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Family Dashboard - AGEWELL Care Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Family Caregiver Hub</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">My Seniors Overview</h1>
+      <p class="text-secondary fs-5">Live status, daily check-ins, and medicine adherence for your loved ones.</p>
+    </div>
+    <a href="{{ url_for('family_alerts') }}" class="btn-3d btn-3d-lime px-4 py-2">
+      <i class="bi bi-bell-fill me-1"></i> View Alerts Center
+    </a>
+  </div>
+
+  <!-- Senior Cards List -->
+  <div class="row g-4 mb-5">
+    {% for item in seniors_status %}
+      {% set s = item['senior'] %}
+      {% set chk = item['checkin'] %}
+      {% set act_sos = item['active_sos'] %}
+      
+      <div class="col-lg-6">
+        <div class="card-3d p-4 p-md-5 h-100 bg-white {{ 'border-danger border-2' if act_sos else '' }}">
+          
+          <!-- Header with Active SOS Alert Indicator -->
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold small">
+                {{ s['relation'] }}
+              </span>
+              <h2 class="font-serif fw-bold fs-2 text-forest-900 mt-1 mb-0">{{ s['name'] }}</h2>
+              <div class="text-secondary small"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ s['address'] or 'San Antonio, TX' }}</div>
+            </div>
+
+            {% if act_sos %}
+              <span class="badge bg-danger text-white rounded-pill px-3 py-2 animate-pulse fw-bold">
+                <i class="bi bi-exclamation-triangle-fill"></i> SOS ACTIVE
+              </span>
+            {% else %}
+              <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 fw-bold">
+                <i class="bi bi-shield-check"></i> Safe
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Active Emergency Banner if SOS triggered -->
+          {% if act_sos %}
+            <div class="alert alert-danger rounded-4 p-3 mb-4 d-flex justify-content-between align-items-center">
+              <div>
+                <strong>EMERGENCY SOS IS ACTIVE!</strong>
+                <div class="small">Triggered at {{ act_sos['triggered_at'] }}. Immediate response requested.</div>
+              </div>
+              <a href="{{ url_for('senior_sos', senior_id=s['id']) }}" class="btn btn-sm btn-danger fw-bold rounded-pill px-3">
+                Respond Now
+              </a>
+            </div>
+          {% endif %}
+
+          <!-- Status Grid: 1. Checkin & 2. Medicines -->
+          <div class="row g-3 my-2">
+            <!-- Morning Check-in Status -->
+            <div class="col-sm-6">
+              <div class="p-3 rounded-4 bg-light h-100">
+                <div class="text-secondary small fw-bold text-uppercase mb-1">Morning Check-in:</div>
+                {% if chk and chk['status'] in ('ok', 'late') %}
+                  <div class="d-flex align-items-center gap-2 text-success fw-bold fs-5">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>"I am OK"</span>
+                  </div>
+                  <div class="small text-muted">Checked in at {{ chk['checkin_time'] }}</div>
+                {% else %}
+                  <div class="d-flex align-items-center gap-2 text-warning fw-bold fs-5">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Pending Check-in</span>
+                  </div>
+                  <div class="small text-muted">Expected by {{ s['check_in_time'] or '09:00' }} AM</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Medicines Today -->
+            <div class="col-sm-6">
+              <div class="p-3 rounded-4 bg-light h-100">
+                <div class="text-secondary small fw-bold text-uppercase mb-1">Medicines Today:</div>
+                <div class="d-flex align-items-center gap-2 text-forest-900 fw-bold fs-5">
+                  <i class="bi bi-capsule text-success"></i>
+                  <span>{{ item['taken_meds'] }} / {{ item['total_meds'] }} Taken</span>
+                </div>
+                {% set total = item['total_meds'] %}
+                {% set taken = item['taken_meds'] %}
+                {% set pct = ((taken / total) * 100) if total > 0 else 100 %}
+                <div class="progress mt-2" style="height: 6px;">
+                  <div class="progress-bar bg-success" style="width: {{ pct }}%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="mt-4 pt-3 border-top d-flex gap-2 justify-content-between align-items-center">
+            <a href="{{ url_for('family_senior_status', senior_id=s['id']) }}" class="btn-3d btn-3d-forest py-2 px-4 fs-6">
+              Detailed Health Status <i class="bi bi-arrow-right"></i>
+            </a>
+            <a href="tel:{{ s['phone'] }}" class="btn btn-outline-success rounded-pill px-3 py-2 fw-bold">
+              <i class="bi bi-telephone-fill me-1"></i> Call Senior
+            </a>
+          </div>
+
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Recent Notifications & Alert Stream -->
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-0">Recent Alert Feed</h3>
+      <a href="{{ url_for('family_alerts') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">View All</a>
+    </div>
+
+    {% if alerts %}
+      <div class="d-flex flex-column gap-3">
+        {% for a in alerts %}
+          <div class="p-3 rounded-4 border bg-white d-flex align-items-start gap-3">
+            <div class="p-2 rounded-circle {{ 'bg-danger text-white' if a['type'] == 'sos' else 'bg-success bg-opacity-10 text-success' }}">
+              <i class="bi {{ 'bi-exclamation-triangle-fill' if a['type'] == 'sos' else 'bi-bell-fill' }} fs-5"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <h5 class="fw-bold mb-0 fs-6 text-forest-900">{{ a['title'] }}</h5>
+                <span class="small text-muted">{{ a['sent_at'] }}</span>
+              </div>
+              <p class="small text-secondary mb-0">{{ a['message'] }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-secondary small mb-0">No alerts currently.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
