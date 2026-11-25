@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Access & Approvals - Senior Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Privacy & Permissions</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Approve Family & Doctors</h1>
+      <p class="text-secondary fs-5">You are in full control. You must approve every person before they can see your status, and you can revoke access anytime.</p>
+    </div>
+    <a href="{{ url_for('senior_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Family Permissions -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 bg-white h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="p-2 bg-success bg-opacity-10 text-success rounded-circle"><i class="bi bi-people-fill fs-4"></i></div>
+          <h3 class="font-serif fw-bold fs-4 mb-0">Linked Family Members</h3>
+        </div>
+
+        {% if family_members %}
+          <div class="d-flex flex-column gap-3">
+            {% for f in family_members %}
+              <div class="p-3 rounded-4 border bg-white shadow-sm d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <h5 class="fw-bold mb-0 text-forest-900">{{ f['user_name'] }}</h5>
+                    <span class="badge bg-light text-secondary border rounded-pill">{{ f['relation'] }}</span>
+                  </div>
+                  <div class="small text-secondary"><i class="bi bi-envelope me-1"></i> {{ f['user_email'] }} • {{ f['user_phone'] }}</div>
+                  <div class="mt-2">
+                    {% if f['is_approved'] %}
+                      <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1">
+                        <i class="bi bi-check-circle-fill me-1"></i> Access Approved
+                      </span>
+                    {% else %}
+                      <span class="badge bg-warning bg-opacity-10 text-dark border border-warning rounded-pill px-3 py-1">
+                        <i class="bi bi-clock-history me-1"></i> Pending Approval
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div>
+                  {% if f['is_approved'] %}
+                    <form action="{{ url_for('senior_approvals') }}" method="POST">
+                      <input type="hidden" name="type" value="family">
+                      <input type="hidden" name="id" value="{{ f['id'] }}">
+                      <input type="hidden" name="decision" value="revoke">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-bold">
+                        Revoke Access
+                      </button>
+                    </form>
+                  {% else %}
+                    <form action="{{ url_for('senior_approvals') }}" method="POST">
+                      <input type="hidden" name="type" value="family">
+                      <input type="hidden" name="id" value="{{ f['id'] }}">
+                      <input type="hidden" name="decision" value="approve">
+                      <button type="submit" class="btn-3d btn-3d-lime py-1 px-3 fs-6">
+                        Approve
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-secondary small">No family links currently requested.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Doctor Assignments -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 bg-white h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="p-2 bg-primary bg-opacity-10 text-primary rounded-circle"><i class="bi bi-prescription2 fs-4"></i></div>
+          <h3 class="font-serif fw-bold fs-4 mb-0">Assigned Healthcare Doctors</h3>
+        </div>
+
+        {% if doctors %}
+          <div class="d-flex flex-column gap-3">
+            {% for d in doctors %}
+              <div class="p-3 rounded-4 border bg-white shadow-sm d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <h5 class="fw-bold mb-0 text-forest-900">{{ d['user_name'] }}</h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">{{ d['specialization'] }}</span>
+                  </div>
+                  <div class="small text-secondary"><i class="bi bi-hospital me-1"></i> {{ d['hospital'] }}</div>
+                  <div class="mt-2">
+                    {% if d['is_approved'] %}
+                      <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1">
+                        <i class="bi bi-check-circle-fill me-1"></i> Medical Access Granted
+                      </span>
+                    {% else %}
+                      <span class="badge bg-warning bg-opacity-10 text-dark border border-warning rounded-pill px-3 py-1">
+                        <i class="bi bi-clock-history me-1"></i> Awaiting Your Approval
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div>
+                  {% if d['is_approved'] %}
+                    <form action="{{ url_for('senior_approvals') }}" method="POST">
+                      <input type="hidden" name="type" value="doctor">
+                      <input type="hidden" name="id" value="{{ d['id'] }}">
+                      <input type="hidden" name="decision" value="revoke">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-bold">
+                        Revoke Access
+                      </button>
+                    </form>
+                  {% else %}
+                    <form action="{{ url_for('senior_approvals') }}" method="POST">
+                      <input type="hidden" name="type" value="doctor">
+                      <input type="hidden" name="id" value="{{ d['id'] }}">
+                      <input type="hidden" name="decision" value="approve">
+                      <button type="submit" class="btn-3d btn-3d-lime py-1 px-3 fs-6">
+                        Approve Doctor
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-secondary small">No doctors currently assigned.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
