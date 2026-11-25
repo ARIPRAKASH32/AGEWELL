@@ -82,6 +82,19 @@
         </a>
         {% endif %}
 
+        <!-- Theme Selector Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-info rounded-pill px-2 py-1 text-white dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Theme & Colors">
+            <i class="bi bi-palette-fill text-info me-1"></i> Theme
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2" style="min-width: 190px;">
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('oceanic')"><span class="badge rounded-circle p-2" style="background: #0ea5e9;"> </span> Oceanic Cyan (Modern)</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('forest')"><span class="badge rounded-circle p-2" style="background: #7bce29;"> </span> Forest & Lime (Classic)</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('amber')"><span class="badge rounded-circle p-2" style="background: #f59e0b;"> </span> Warm Amber (Sunset)</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('dark')"><span class="badge rounded-circle p-2" style="background: #1e293b;"> </span> Midnight Dark (Luxe)</button></li>
+          </ul>
+        </div>
+
         <!-- Accessibility Big Text Switch -->
         <button id="toggle-senior-size" class="btn btn-sm btn-outline-light rounded-pill px-2 py-1" title="Toggle Big Text for Seniors">
           <i class="bi bi-fonts fs-6"></i> A+

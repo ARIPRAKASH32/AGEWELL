@@ -21,17 +21,17 @@ function initHero3D(containerId) {
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
   scene.add(ambientLight);
 
-  const mainLight = new THREE.DirectionalLight(0xa3e635, 3.0);
+  const mainLight = new THREE.DirectionalLight(0x38bdf8, 3.0);
   mainLight.position.set(6, 6, 6);
   scene.add(mainLight);
 
-  const blueBacklight = new THREE.PointLight(0x38bdf8, 4.0, 30);
+  const blueBacklight = new THREE.PointLight(0x0284c7, 4.0, 30);
   blueBacklight.position.set(-6, -4, -3);
   scene.add(blueBacklight);
 
-  const limeFillLight = new THREE.PointLight(0x76c827, 3.5, 25);
-  limeFillLight.position.set(4, -5, 4);
-  scene.add(limeFillLight);
+  const cyanFillLight = new THREE.PointLight(0x06b6d4, 3.5, 25);
+  cyanFillLight.position.set(4, -5, 4);
+  scene.add(cyanFillLight);
 
   // Main 3D Container Group
   const masterGroup = new THREE.Group();
@@ -41,51 +41,51 @@ function initHero3D(containerId) {
   const capsuleGroup = new THREE.Group();
   masterGroup.add(capsuleGroup);
 
-  // Lower Emerald Capsule Half
+  // Lower Oceanic Sapphire Capsule Half
   const lowerGeo = new THREE.CylinderGeometry(1.15, 1.15, 1.4, 32, 1, false);
-  const emeraldMat = new THREE.MeshPhysicalMaterial({
-    color: 0x144233,
-    emissive: 0x081d16,
-    emissiveIntensity: 0.5,
+  const sapphireMat = new THREE.MeshPhysicalMaterial({
+    color: 0x0f2744,
+    emissive: 0x071324,
+    emissiveIntensity: 0.6,
     roughness: 0.15,
-    metalness: 0.2,
+    metalness: 0.3,
     clearcoat: 1.0,
     clearcoatRoughness: 0.1,
-    transmission: 0.5,
+    transmission: 0.45,
     opacity: 0.95,
     transparent: true,
     reflectivity: 0.9
   });
-  const lowerCyl = new THREE.Mesh(lowerGeo, emeraldMat);
+  const lowerCyl = new THREE.Mesh(lowerGeo, sapphireMat);
   lowerCyl.position.y = -0.7;
   capsuleGroup.add(lowerCyl);
 
   const lowerBottomGeo = new THREE.SphereGeometry(1.15, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-  const lowerBottom = new THREE.Mesh(lowerBottomGeo, emeraldMat);
+  const lowerBottom = new THREE.Mesh(lowerBottomGeo, sapphireMat);
   lowerBottom.position.y = -1.4;
   capsuleGroup.add(lowerBottom);
 
-  // Upper Vibrant Lime Capsule Half
+  // Upper Vibrant Cyan Capsule Half
   const upperGeo = new THREE.CylinderGeometry(1.15, 1.15, 1.4, 32, 1, false);
-  const limeMat = new THREE.MeshPhysicalMaterial({
-    color: 0x8be034,
-    emissive: 0x5aa219,
+  const cyanMat = new THREE.MeshPhysicalMaterial({
+    color: 0x0ea5e9,
+    emissive: 0x0284c7,
     emissiveIntensity: 0.6,
     roughness: 0.1,
     metalness: 0.3,
     clearcoat: 1.0,
     clearcoatRoughness: 0.05,
-    transmission: 0.35,
+    transmission: 0.4,
     opacity: 0.96,
     transparent: true,
     reflectivity: 0.95
   });
-  const upperCyl = new THREE.Mesh(upperGeo, limeMat);
+  const upperCyl = new THREE.Mesh(upperGeo, cyanMat);
   upperCyl.position.y = 0.7;
   capsuleGroup.add(upperCyl);
 
   const upperTopGeo = new THREE.SphereGeometry(1.15, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-  const upperTop = new THREE.Mesh(upperTopGeo, limeMat);
+  const upperTop = new THREE.Mesh(upperTopGeo, cyanMat);
   upperTop.position.y = 1.4;
   capsuleGroup.add(upperTop);
 
@@ -128,11 +128,11 @@ function initHero3D(containerId) {
   const ringsGroup = new THREE.Group();
   masterGroup.add(ringsGroup);
 
-  // Outer Ring 1
+  // Outer Ring 1 (Cyan)
   const ring1Geo = new THREE.TorusGeometry(2.6, 0.045, 16, 120);
   const ring1Mat = new THREE.MeshStandardMaterial({
-    color: 0x8be034,
-    emissive: 0x65a30d,
+    color: 0x38bdf8,
+    emissive: 0x0284c7,
     emissiveIntensity: 0.8,
     metalness: 0.6,
     roughness: 0.2
@@ -145,9 +145,9 @@ function initHero3D(containerId) {
   sat1.position.set(2.6, 0, 0);
   ring1.add(sat1);
 
-  // Outer Ring 2 (Perpendicular Gyro)
+  // Outer Ring 2 (Perpendicular Gyro - Deep Azure)
   const ring2Geo = new THREE.TorusGeometry(3.1, 0.035, 16, 120);
-  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.65 });
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.65 });
   const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
   ringsGroup.add(ring2);
 
@@ -155,9 +155,9 @@ function initHero3D(containerId) {
   sat2.position.set(-3.1, 0, 0);
   ring2.add(sat2);
 
-  // Outer Ring 3 (Inclined Aura)
+  // Outer Ring 3 (Inclined Aura - Mint Aqua)
   const ring3Geo = new THREE.TorusGeometry(3.6, 0.025, 16, 120);
-  const ring3Mat = new THREE.MeshBasicMaterial({ color: 0xa3e635, transparent: true, opacity: 0.4 });
+  const ring3Mat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.45 });
   const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
   ringsGroup.add(ring3);
 
@@ -172,7 +172,7 @@ function initHero3D(containerId) {
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   const starMat = new THREE.PointsMaterial({
-    color: 0x8be034,
+    color: 0x38bdf8,
     size: 0.16,
     transparent: true,
     opacity: 0.85
@@ -263,19 +263,19 @@ function initWellnessOrb3D(containerId) {
 
   const amb = new THREE.AmbientLight(0xffffff, 0.9);
   scene.add(amb);
-  const dir = new THREE.DirectionalLight(0x8be034, 2.5);
+  const dir = new THREE.DirectionalLight(0x38bdf8, 2.8);
   dir.position.set(4, 4, 4);
   scene.add(dir);
 
   const orbGroup = new THREE.Group();
   scene.add(orbGroup);
 
-  // Faceted Luminous Vitality Core
+  // Faceted Luminous Vitality Core (Oceanic Cyan)
   const sphereGeo = new THREE.IcosahedronGeometry(1.25, 4);
   const sphereMat = new THREE.MeshPhysicalMaterial({
-    color: 0x7bce29,
-    emissive: 0x143e31,
-    emissiveIntensity: 0.6,
+    color: 0x0ea5e9,
+    emissive: 0x0369a1,
+    emissiveIntensity: 0.65,
     roughness: 0.1,
     metalness: 0.2,
     clearcoat: 1.0,
@@ -284,15 +284,15 @@ function initWellnessOrb3D(containerId) {
   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
   orbGroup.add(sphere);
 
-  // Outer Heart-Rate Geometric Aura
+  // Outer Heart-Rate Geometric Aura (Cyan Wireframe)
   const wireGeo = new THREE.IcosahedronGeometry(1.5, 2);
-  const wireMat = new THREE.MeshBasicMaterial({ color: 0xa9ee62, wireframe: true, transparent: true, opacity: 0.45 });
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.45 });
   const wire = new THREE.Mesh(wireGeo, wireMat);
   orbGroup.add(wire);
 
-  // ECG Vitality Pulse Ring
+  // ECG Vitality Pulse Ring (Mint Green)
   const ecgGeo = new THREE.TorusGeometry(1.85, 0.03, 16, 64);
-  const ecgMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+  const ecgMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.8 });
   const ecgRing = new THREE.Mesh(ecgGeo, ecgMat);
   ecgRing.rotation.x = Math.PI / 2.5;
   orbGroup.add(ecgRing);

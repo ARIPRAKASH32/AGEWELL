@@ -178,8 +178,24 @@ function fillDemoLogin(role) {
     'admin':  { email: 'admin@agewell.com',  pass: 'password123' }
   };
 
-  if (credentials[role]) {
-    emailInput.value = credentials[role].email;
-    passInput.value = credentials[role].pass;
-  }
+// 8. Dynamic Theme Switcher System
+function initTheme() {
+  const savedTheme = localStorage.getItem('agewell_theme') || 'oceanic';
+  setAppTheme(savedTheme, false);
 }
+
+window.setAppTheme = function(themeName, save = true) {
+  if (themeName === 'oceanic') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', themeName);
+  }
+  if (save) {
+    localStorage.setItem('agewell_theme', themeName);
+    playTone('success');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+});
