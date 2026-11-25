@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Visits & Appointments - Senior Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Checkups & Follow-ups</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Doctor Visits</h1>
+      <p class="text-secondary fs-5">All scheduled visits with your doctors and clinics.</p>
+    </div>
+    <a href="{{ url_for('senior_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+  </div>
+
+  <div class="row g-4">
+    {% for appt in appointments %}
+      <div class="col-md-6">
+        <div class="card-3d p-4 h-100 bg-white">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill fw-bold fs-6">
+              <i class="bi bi-calendar3 me-1"></i> {{ appt['appointment_date'] }} • {{ appt['appointment_time'] }}
+            </span>
+            <span class="badge {{ 'bg-success' if appt['status'] == 'completed' else 'bg-warning text-dark' }} rounded-pill px-3 py-1 text-uppercase fw-bold">
+              {{ appt['status'] }}
+            </span>
+          </div>
+
+          <h3 class="font-serif fw-bold fs-4 text-forest-900 mb-2">{{ appt['title'] }}</h3>
+          
+          <div class="mb-3 d-flex flex-column gap-2 text-secondary">
+            <div><i class="bi bi-person-fill-check text-success me-2"></i><strong>Doctor:</strong> {{ appt['doctor_name'] }}</div>
+            <div><i class="bi bi-geo-alt-fill text-danger me-2"></i><strong>Location:</strong> {{ appt['location'] or 'Clinic Suite' }}</div>
+            {% if appt['notes'] %}
+              <div class="p-3 bg-light rounded-3 small">
+                <strong>Notes / Instructions:</strong> {{ appt['notes'] }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Status: <strong>{{ appt['status'] | title }}</strong></span>
+            <a href="tel:2105550848" class="btn btn-sm btn-outline-success rounded-pill fw-bold">
+              <i class="bi bi-telephone-fill me-1"></i> Call Clinic
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
