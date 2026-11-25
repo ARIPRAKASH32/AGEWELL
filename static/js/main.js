@@ -210,6 +210,21 @@ window.setAppTheme = function(themeName, save = true) {
   }
 };
 
+// 9. Global Interactive 3D Container Spotlight & Touch Physics
+function initInteractive3DCards() {
+  const cards = document.querySelectorAll('.card-3d, .service-num-card');
+  cards.forEach((card) => {
+    card.addEventListener('pointermove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initInteractive3DCards();
 });
