@@ -166,7 +166,7 @@ function initSOSCountdown(secondsRemaining, escalationStep, totalSteps) {
 }
 
 // 7. Demo Account Fast Login Switcher
-function fillDemoLogin(role) {
+function fillDemoLogin(role, autoSubmit = false) {
   const emailInput = document.getElementById('login-email');
   const passInput = document.getElementById('login-password');
   if (!emailInput || !passInput) return;
@@ -178,9 +178,23 @@ function fillDemoLogin(role) {
     'admin':  { email: 'admin@agewell.com',  pass: 'password123' }
   };
 
+  const creds = credentials[role];
+  if (!creds) return;
+
+  emailInput.value = creds.email;
+  passInput.value = creds.pass;
+
+  if (typeof playTone === 'function') playTone('success');
+
+  if (autoSubmit) {
+    const form = emailInput.closest('form');
+    if (form) form.submit();
+  }
+}
+
 // 8. Dynamic Theme Switcher System
 function initTheme() {
-  const savedTheme = localStorage.getItem('agewell_theme') || 'oceanic';
+  const savedTheme = localStorage.getItem('agewell_theme') || 'forest';
   setAppTheme(savedTheme, false);
 }
 
