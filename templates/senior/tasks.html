@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Daily Tasks & Wellness - Senior Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Independence Checklist</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Daily Tasks & Routine</h1>
+      <p class="text-secondary fs-5">Gentle reminders to stay active, hydrated, and healthy.</p>
+    </div>
+    <a href="{{ url_for('senior_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Tasks List -->
+    <div class="col-lg-7">
+      <div class="card-3d p-4 bg-white h-100">
+        <h3 class="font-serif fw-bold fs-3 mb-3">Tasks For Today ({{ today_str }})</h3>
+        
+        <div class="d-flex flex-column gap-3">
+          {% for t in tasks %}
+            <div class="p-3 rounded-4 border d-flex align-items-center justify-content-between {{ 'bg-light opacity-75' if t['is_completed'] else 'bg-white' }}">
+              <div class="d-flex align-items-center gap-3">
+                <form action="{{ url_for('senior_tasks') }}" method="POST" class="m-0">
+                  <input type="hidden" name="action" value="toggle">
+                  <input type="hidden" name="task_id" value="{{ t['id'] }}">
+                  <button type="submit" class="btn p-0 border-0 fs-2 {{ 'text-success' if t['is_completed'] else 'text-secondary' }}">
+                    <i class="bi {{ 'bi-check-circle-fill' if t['is_completed'] else 'bi-circle' }}"></i>
+                  </button>
+                </form>
+                <div>
+                  <h4 class="fw-bold mb-1 fs-5 {{ 'text-decoration-line-through text-muted' if t['is_completed'] else 'text-dark' }}">{{ t['title'] }}</h4>
+                  <div class="text-secondary small"><i class="bi bi-clock me-1"></i> Due at {{ t['time'] }}</div>
+                  {% if t['description'] %}
+                    <p class="small text-muted mb-0 mt-1">{{ t['description'] }}</p>
+                  {% endif %}
+                </div>
+              </div>
+              <span class="badge {{ 'bg-success' if t['is_completed'] else 'bg-warning text-dark' }} rounded-pill px-3 py-2 fw-bold">
+                {{ 'Completed' if t['is_completed'] else 'To Do' }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Task Form -->
+    <div class="col-lg-5">
+      <div class="card-3d p-4 bg-white">
+        <h3 class="font-serif fw-bold fs-3 mb-3">Add a New Task</h3>
+        <form action="{{ url_for('senior_tasks') }}" method="POST">
+          <input type="hidden" name="action" value="add">
+          
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Task Title</label>
+            <input type="text" name="title" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Afternoon Tea & Water" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Preferred Time</label>
+            <input type="time" name="time" class="form-control form-control-lg bg-light border-0" value="14:00" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-secondary small">Description / Notes</label>
+            <textarea name="description" class="form-control bg-light border-0" rows="3" placeholder="e.g. Drink 2 full glasses of water..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-3d btn-3d-lime w-100 py-3 fs-5">
+            <i class="bi bi-plus-circle me-1"></i> Save Task
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
