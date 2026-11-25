@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}System Administration - AGEWELL{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Administrative Console</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">System Overview & Analytics</h1>
+      <p class="text-secondary fs-5">Platform statistics, account lifecycle management, and emergency logs.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin_users') }}" class="btn-3d btn-3d-lime px-4 py-2">
+        <i class="bi bi-people-fill me-1"></i> Manage Users
+      </a>
+      <a href="{{ url_for('admin_emergencies') }}" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold">
+        <i class="bi bi-lightning-charge-fill me-1"></i> Emergency Records
+      </a>
+    </div>
+  </div>
+
+  <!-- STRICT PRIVACY NOTICE (From PDF Blueprint) -->
+  <div class="alert alert-warning border-0 rounded-4 p-4 mb-4 shadow-sm d-flex align-items-center gap-3">
+    <div class="bg-warning text-dark p-3 rounded-circle"><i class="bi bi-shield-lock-fill fs-3"></i></div>
+    <div>
+      <h5 class="fw-bold mb-1">Strict Medical Privacy Filter Enforced</h5>
+      <p class="mb-0 small text-secondary">
+        As specified in the Senior Independence Portal Blueprint: <strong>"Admin: Manages accounts and sees statistics. Cannot see private medical details."</strong> Clinical notes, diagnostic records, and personal prescriptions are strictly shielded from this administrative view.
+      </p>
+    </div>
+  </div>
+
+  <!-- 3D STATS COUNTERS -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-3">
+      <div class="card-3d p-4 bg-white text-center">
+        <i class="bi bi-heart-pulse-fill fs-1 text-success mb-2"></i>
+        <div class="display-5 fw-bold font-serif text-forest-900">{{ user_counts.get('senior', 0) }}</div>
+        <div class="small fw-bold text-secondary text-uppercase">Active Seniors</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-3d p-4 bg-white text-center">
+        <i class="bi bi-people-fill fs-1 text-primary mb-2"></i>
+        <div class="display-5 fw-bold font-serif text-forest-900">{{ user_counts.get('family', 0) }}</div>
+        <div class="small fw-bold text-secondary text-uppercase">Family Responders</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-3d p-4 bg-white text-center">
+        <i class="bi bi-prescription2 fs-1 text-info mb-2"></i>
+        <div class="display-5 fw-bold font-serif text-forest-900">{{ user_counts.get('doctor', 0) }}</div>
+        <div class="small fw-bold text-secondary text-uppercase">Attending Doctors</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-3d p-4 bg-white text-center">
+        <i class="bi bi-broadcast fs-1 text-danger mb-2"></i>
+        <div class="display-5 fw-bold font-serif text-forest-900">{{ total_emergencies }}</div>
+        <div class="small fw-bold text-secondary text-uppercase">Total SOS Incidents</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT AUDIT LOGS -->
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-0">System Access & Audit Trail</h3>
+      <a href="{{ url_for('admin_audit_logs') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">Full Audit Trail</a>
+    </div>
+    <p class="text-secondary small mb-4">Complete record of access changes, permissions, and session events.</p>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Target Type</th>
+            <th>Details</th>
+            <th>IP Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in recent_audits %}
+            <tr>
+              <td class="font-monospace small">{{ a['created_at'] }}</td>
+              <td class="fw-bold">{{ a['actor_name'] or 'System Scheduler' }}</td>
+              <td><span class="badge bg-light text-dark border">{{ a['action'] }}</span></td>
+              <td class="text-secondary small">{{ a['target_type'] }}</td>
+              <td class="small">{{ a['details'] or '-' }}</td>
+              <td class="font-monospace small text-muted">{{ a['ip_address'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Security Audit Trail - System Administration{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Security & Governance</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">System Audit Trail</h1>
+      <p class="text-secondary fs-5">Complete audit log of all access changes, clinical note creations, logins, and approvals.</p>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+  </div>
+
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Log ID</th>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Role</th>
+            <th>Action</th>
+            <th>Target</th>
+            <th>Audit Details</th>
+            <th>IP Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for l in logs %}
+            <tr>
+              <td class="font-monospace small">#{{ l['id'] }}</td>
+              <td class="small">{{ l['created_at'] }}</td>
+              <td class="fw-bold text-forest-900">{{ l['actor_name'] or 'System' }}</td>
+              <td>
+                <span class="badge bg-light text-secondary border rounded-pill small">{{ l['actor_role'] or 'daemon' }}</span>
+              </td>
+              <td><span class="badge bg-dark rounded-pill px-3 py-1">{{ l['action'] }}</span></td>
+              <td class="small text-muted">{{ l['target_type'] }} (#{{ l['target_id'] }})</td>
+              <td class="small text-secondary">{{ l['details'] or '-' }}</td>
+              <td class="font-monospace small text-muted">{{ l['ip_address'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

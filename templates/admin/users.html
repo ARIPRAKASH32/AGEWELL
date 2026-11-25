@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management - System Administration{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Access Control</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">User Accounts</h1>
+      <p class="text-secondary fs-5">Manage platform accounts across all 4 roles (Senior, Family, Doctor, Admin).</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+      </a>
+      <button class="btn-3d btn-3d-lime py-2 px-4" data-bs-toggle="modal" data-bs-target="#createUserModal">
+        <i class="bi bi-person-plus-fill me-1"></i> Create New User
+      </button>
+    </div>
+  </div>
+
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Registered</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td class="font-monospace small">#{{ u['id'] }}</td>
+              <td class="fw-bold text-forest-900">{{ u['name'] }}</td>
+              <td>{{ u['email'] }}</td>
+              <td>{{ u['phone'] or '-' }}</td>
+              <td>
+                {% if u['role'] == 'senior' %}
+                  <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1">Senior</span>
+                {% elif u['role'] == 'family' %}
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1">Family</span>
+                {% elif u['role'] == 'doctor' %}
+                  <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3 py-1">Doctor</span>
+                {% else %}
+                  <span class="badge bg-dark rounded-pill px-3 py-1">Admin</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if u['is_active'] %}
+                  <span class="badge bg-success rounded-pill px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i> Active</span>
+                {% else %}
+                  <span class="badge bg-danger rounded-pill px-2 py-1">Disabled</span>
+                {% endif %}
+              </td>
+              <td class="small text-muted">{{ u['created_at'].split(' ')[0] if u['created_at'] else '-' }}</td>
+              <td>
+                <form action="{{ url_for('admin_users') }}" method="POST" class="m-0">
+                  <input type="hidden" name="action" value="toggle_status">
+                  <input type="hidden" name="user_id" value="{{ u['id'] }}">
+                  <button type="submit" class="btn btn-sm {{ 'btn-outline-danger' if u['is_active'] else 'btn-outline-success' }} rounded-pill px-3">
+                    {{ 'Deactivate' if u['is_active'] else 'Activate' }}
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Create User Modal -->
+  <div class="modal fade" id="createUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title font-serif fw-bold">Provision New User Account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form action="{{ url_for('admin_users') }}" method="POST">
+          <input type="hidden" name="action" value="create_user">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Full Name</label>
+              <input type="text" name="name" class="form-control bg-light border-0" placeholder="e.g. Martha Stewart" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Email Address</label>
+              <input type="email" name="email" class="form-control bg-light border-0" placeholder="name@domain.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Phone Number</label>
+              <input type="tel" name="phone" class="form-control bg-light border-0" placeholder="+1 (210) 555-...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">User Role</label>
+              <select name="role" class="form-select bg-light border-0">
+                <option value="senior">Senior Citizen</option>
+                <option value="family">Family Member</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="small text-muted">
+              Note: Default password will be set to <code>password123</code>.
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">Create User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

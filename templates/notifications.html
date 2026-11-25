@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - Senior Independence Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Message Center</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Notifications</h1>
+      <p class="text-secondary fs-5">All delivered in-app alerts and SMS broadcasts.</p>
+    </div>
+  </div>
+
+  <div class="card-3d p-4 p-md-5 bg-white">
+    {% if notifications %}
+      <div class="d-flex flex-column gap-3">
+        {% for n in notifications %}
+          <div class="p-4 rounded-4 border bg-white d-flex align-items-start gap-3 shadow-sm">
+            <div class="p-3 rounded-circle {{ 'bg-danger text-white' if n['type'] == 'sos' else ('bg-warning text-dark' if n['type'] == 'missed_medicine' else 'bg-success bg-opacity-10 text-success') }}">
+              <i class="bi {{ 'bi-exclamation-triangle-fill' if n['type'] == 'sos' else ('bi-capsule' if n['type'] == 'missed_medicine' else 'bi-bell-fill') }} fs-4"></i>
+            </div>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <h4 class="font-serif fw-bold fs-5 text-forest-900 mb-0">{{ n['title'] }}</h4>
+                <span class="small text-muted">{{ n['sent_at'] }}</span>
+              </div>
+              <p class="text-secondary mb-2">{{ n['message'] }}</p>
+              <div class="d-flex gap-2 align-items-center">
+                <span class="badge bg-light text-secondary border rounded-pill small">Channel: {{ n['channel'] | upper }}</span>
+                <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill small"><i class="bi bi-check2"></i> Delivered</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 text-secondary">
+        <i class="bi bi-bell-slash fs-1 d-block mb-2 text-muted"></i>
+        <h4 class="font-serif fw-bold">No notifications yet</h4>
+        <p class="small text-muted">You are all caught up!</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
