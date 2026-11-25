@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+
+{% block title %}Senior Home - AGEWELL{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+
+  <!-- Senior Greeting & Voice Assistant Toolbar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="text-success fw-bold text-uppercase small"><i class="bi bi-calendar3"></i> {{ today_date }}</span>
+      <h1 class="display-5 font-serif fw-bold text-forest-900 mb-0">Good Day, {{ current_user.split(' ')[0] }}!</h1>
+      <p class="text-secondary fs-5 mb-0">Here is your simple daily health overview.</p>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <!-- Voice Assistant Read Aloud Button for Seniors -->
+      <button id="voice-assist-toggle" class="btn btn-outline-success rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2 shadow-sm" style="font-size: 1.1rem;">
+        <i class="bi bi-volume-up-fill text-success fs-5"></i> Read Reminders Aloud
+      </button>
+
+      <!-- Big Red SOS Trigger -->
+      <a href="{{ url_for('senior_sos') }}" class="btn-3d btn-3d-danger px-4 py-2 fs-5">
+        <i class="bi bi-exclamation-triangle-fill"></i> SOS Emergency
+      </a>
+    </div>
+  </div>
+
+  <!-- ROW 1: Big 3D "I AM OK" Check-in Section + 3D Vitality Orb -->
+  <div class="row g-4 mb-5">
+    
+    <!-- 3D "I am OK" Tactile Hero Card -->
+    <div class="col-lg-7">
+      <div class="card-3d p-4 p-md-5 h-100 d-flex flex-column justify-content-between text-center" style="background: linear-gradient(180deg, #ffffff 0%, var(--cream-100) 100%);">
+        <div>
+          <span class="pill-tag pill-forest mb-2">Step 1 • Morning Safety</span>
+          <h2 class="font-serif fw-bold display-6 mb-2">Daily Check-in</h2>
+          <p class="text-secondary fs-5 mb-4">
+            Press this big button once every morning so your loved ones know you are safe.
+          </p>
+        </div>
+
+        <div class="ok-checkin-wrapper my-3">
+          {% if today_checkin and today_checkin['status'] in ('ok', 'late') %}
+            <div class="btn-iam-ok-3d already-checked" data-speakable>
+              <i class="bi bi-check-circle-fill fs-1 mb-2"></i>
+              <div class="main-text">I AM OK</div>
+              <div class="sub-text">Checked in at {{ today_checkin['checkin_time'] or 'Morning' }}</div>
+            </div>
+            <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-4 py-2 fs-6 mt-3 fw-bold">
+              <i class="bi bi-check2-all me-1"></i> Family Notified • All Clear
+            </div>
+          {% else %}
+            <form action="{{ url_for('senior_checkin') }}" method="POST">
+              <button type="submit" class="btn-iam-ok-3d border-0">
+                <i class="bi bi-hand-index-thumb-fill fs-2 mb-1"></i>
+                <div class="main-text">I AM OK</div>
+                <div class="sub-text">Tap Here Now</div>
+              </button>
+            </form>
+            <div class="badge bg-warning bg-opacity-10 text-dark border border-warning rounded-pill px-4 py-2 fs-6 mt-3 fw-semibold">
+              <i class="bi bi-clock-history me-1"></i> Expected by {{ profile['check_in_time'] if profile else '09:00' }} AM
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="text-secondary small mt-3">
+          <i class="bi bi-info-circle-fill text-success me-1"></i> If you do not press this button by {{ profile['check_in_time'] if profile else '09:00' }} AM, an alert is sent to your family.
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Wellness Sphere & Vitality Summary -->
+    <div class="col-lg-5">
+      <div class="card-3d card-3d-forest p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-success bg-opacity-25 text-white border border-success border-opacity-50 px-3 py-1 rounded-pill small">
+              Live Health Pulse
+            </span>
+            <span class="text-white-50 small"><i class="bi bi-shield-fill-check text-success"></i> Monitored</span>
+          </div>
+          <h3 class="font-serif fw-bold text-white fs-3 mb-1">Vitality Guardian</h3>
+          <p class="text-white-50 small mb-2">Real-time safety and medicine schedule indicator.</p>
+        </div>
+
+        <!-- 3D Three.js Wellness Sphere -->
+        <div id="wellness-orb-canvas" class="canvas-3d-mini my-2"></div>
+
+        <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(139, 224, 52, 0.2);">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-white fw-bold small">Today's Medicine Progress:</span>
+            <span class="text-lime fw-bold small">
+              {{ meds | selectattr('status', 'equalto', 'taken') | list | length }} of {{ meds | length }} Taken
+            </span>
+          </div>
+          <div class="progress" style="height: 10px; background: rgba(0,0,0,0.3); border-radius: 9999px;">
+            {% set total_m = meds | length %}
+            {% set taken_m = meds | selectattr('status', 'equalto', 'taken') | list | length %}
+            {% set pct = ((taken_m / total_m) * 100) if total_m > 0 else 100 %}
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ pct }}%; border-radius: 9999px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: TODAY'S MEDICINES (Senior Blueprint Priority: Big buttons, Taken/Skip) -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <span class="pill-tag pill-lime mb-1">Step 2 • Prescriptions</span>
+        <h2 class="font-serif fw-bold display-6 mb-0">Today's Medicines</h2>
+      </div>
+      <a href="{{ url_for('senior_medicines') }}" class="btn btn-outline-dark rounded-pill fw-bold px-3 py-2">
+        View All Medicines <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    {% if meds %}
+      <div class="row g-4">
+        {% for med in meds %}
+          <div class="col-md-6 col-lg-4">
+            <div class="medicine-card-3d status-{{ med['status'] }} h-100 d-flex flex-column justify-content-between" data-speakable>
+              <div>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-bold fs-6">
+                    <i class="bi bi-clock-fill text-success me-1"></i> {{ med['time'] }}
+                  </span>
+                  {% if med['status'] == 'taken' %}
+                    <span class="badge bg-success text-white px-3 py-2 rounded-pill fw-bold">
+                      <i class="bi bi-check-circle-fill me-1"></i> TAKEN
+                    </span>
+                  {% elif med['status'] == 'skipped' %}
+                    <span class="badge bg-secondary text-white px-3 py-2 rounded-pill fw-bold">
+                      SKIPPED
+                    </span>
+                  {% elif med['status'] == 'missed' %}
+                    <span class="badge bg-danger text-white px-3 py-2 rounded-pill fw-bold">
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i> MISSED
+                    </span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
+                      DUE TODAY
+                    </span>
+                  {% endif %}
+                </div>
+
+                <h3 class="font-serif fw-bold fs-4 text-forest-900 mb-1">{{ med['name'] }}</h3>
+                <div class="text-secondary fw-bold fs-6 mb-2">{{ med['dose'] }}</div>
+                {% if med['instructions'] %}
+                  <p class="text-secondary small bg-light p-2 rounded-3 border-0 mb-3">
+                    <i class="bi bi-info-circle text-success me-1"></i> {{ med['instructions'] }}
+                  </p>
+                {% endif %}
+              </div>
+
+              <!-- Big Taken / Skip Buttons -->
+              <div class="pt-2 border-top">
+                {% if med['status'] != 'taken' %}
+                  <div class="d-flex gap-2">
+                    <form action="{{ url_for('senior_medicine_action') }}" method="POST" class="flex-grow-1">
+                      <input type="hidden" name="med_id" value="{{ med['med_id'] }}">
+                      <input type="hidden" name="time" value="{{ med['time'] }}">
+                      <input type="hidden" name="action" value="taken">
+                      <button type="submit" class="btn-3d btn-3d-lime w-100 py-2 fs-6">
+                        <i class="bi bi-check-lg fs-5"></i> Mark Taken
+                      </button>
+                    </form>
+                    <form action="{{ url_for('senior_medicine_action') }}" method="POST">
+                      <input type="hidden" name="med_id" value="{{ med['med_id'] }}">
+                      <input type="hidden" name="time" value="{{ med['time'] }}">
+                      <input type="hidden" name="action" value="skipped">
+                      <button type="submit" class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-bold" title="Skip this dose">
+                        Skip
+                      </button>
+                    </form>
+                  </div>
+                {% else %}
+                  <div class="text-success small fw-bold text-center py-2">
+                    <i class="bi bi-check-circle-fill"></i> Completed for this time
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card p-4 rounded-4 text-center bg-white border-0 shadow-sm">
+        <i class="bi bi-capsule fs-1 text-secondary mb-2"></i>
+        <h4 class="font-serif fw-bold">No medicines scheduled for today</h4>
+        <p class="text-secondary mb-0">Enjoy your day! Contact your doctor if you need medication updates.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- ROW 3: DAILY TASKS & UPCOMING APPOINTMENTS -->
+  <div class="row g-4">
+    <!-- Daily Tasks -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="font-serif fw-bold fs-4 mb-0"><i class="bi bi-check2-square text-success me-2"></i>Daily Tasks & Wellness</h3>
+          <a href="{{ url_for('senior_tasks') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">Manage</a>
+        </div>
+        {% if tasks %}
+          <div class="d-flex flex-column gap-3">
+            {% for t in tasks %}
+              <div class="p-3 rounded-4 border d-flex align-items-center justify-content-between {{ 'bg-light opacity-75' if t['is_completed'] else 'bg-white' }}" data-speakable>
+                <div class="d-flex align-items-center gap-3">
+                  <form action="{{ url_for('senior_tasks') }}" method="POST" class="m-0">
+                    <input type="hidden" name="action" value="toggle">
+                    <input type="hidden" name="task_id" value="{{ t['id'] }}">
+                    <button type="submit" class="btn p-0 border-0 fs-3 {{ 'text-success' if t['is_completed'] else 'text-secondary' }}">
+                      <i class="bi {{ 'bi-check-circle-fill' if t['is_completed'] else 'bi-circle' }}"></i>
+                    </button>
+                  </form>
+                  <div>
+                    <h5 class="fw-bold mb-0 fs-6 {{ 'text-decoration-line-through text-muted' if t['is_completed'] else 'text-dark' }}">{{ t['title'] }}</h5>
+                    <div class="small text-secondary"><i class="bi bi-clock me-1"></i> {{ t['time'] }} {% if t['description'] %}• {{ t['description'] }}{% endif %}</div>
+                  </div>
+                </div>
+                <span class="badge {{ 'bg-success' if t['is_completed'] else 'bg-light text-secondary border' }} rounded-pill px-3 py-2">
+                  {{ 'Done' if t['is_completed'] else 'Pending' }}
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-secondary">
+            <i class="bi bi-sun fs-2 d-block mb-1 text-warning"></i>
+            No tasks left for today!
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Upcoming Doctor Visits -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3 class="font-serif fw-bold fs-4 mb-0"><i class="bi bi-calendar2-heart text-primary me-2"></i>Upcoming Doctor Visits</h3>
+          <a href="{{ url_for('senior_appointments') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold">All Visits</a>
+        </div>
+        {% if appointments %}
+          <div class="d-flex flex-column gap-3">
+            {% for appt in appointments %}
+              <div class="p-3 rounded-4 border bg-white" data-speakable>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill fw-bold">
+                    <i class="bi bi-calendar-event me-1"></i> {{ appt['appointment_date'] }} at {{ appt['appointment_time'] }}
+                  </span>
+                  <span class="badge bg-light text-secondary border rounded-pill">{{ appt['status'] | title }}</span>
+                </div>
+                <h5 class="fw-bold font-serif fs-5 mb-1">{{ appt['title'] }}</h5>
+                <div class="text-secondary small mb-1"><i class="bi bi-person-fill-check text-success me-1"></i> {{ appt['doctor_name'] }}</div>
+                <div class="text-secondary small"><i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ appt['location'] or 'Clinic / Hospital' }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-secondary">
+            <i class="bi bi-calendar-check fs-2 d-block mb-1 text-success"></i>
+            No upcoming appointments scheduled.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
