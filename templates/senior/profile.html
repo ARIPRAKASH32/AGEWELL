@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile & Emergency Contacts - Senior Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Safety Preferences</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">Profile & Emergency Contacts</h1>
+      <p class="text-secondary fs-5">Configure your morning check-in schedule, medicine grace period, and priority responders.</p>
+    </div>
+    <a href="{{ url_for('senior_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+  </div>
+
+  <div class="row g-4">
+    <!-- Profile & Schedule Settings Form -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 p-md-5 bg-white h-100">
+        <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-3">
+          <i class="bi bi-sliders text-success me-2"></i>Senior Safety Settings
+        </h3>
+
+        <form action="{{ url_for('senior_profile') }}" method="POST">
+          <input type="hidden" name="action" value="update_profile">
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold text-secondary small">Daily "I am OK" Check-in Time</label>
+              <input type="time" name="check_in_time" class="form-control form-control-lg bg-light border-0" value="{{ profile['check_in_time'] or '09:00' }}" required>
+              <div class="form-text small">If missed by this time, family is alerted.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold text-secondary small">Medicine Grace Time (Minutes)</label>
+              <input type="number" name="grace_time_minutes" class="form-control form-control-lg bg-light border-0" value="{{ profile['grace_time_minutes'] or 30 }}" min="5" max="120" required>
+              <div class="form-text small">Default: 30 minutes.</div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold text-secondary small">Blood Group</label>
+              <input type="text" name="blood_group" class="form-control form-control-lg bg-light border-0" value="{{ profile['blood_group'] or 'O+' }}">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold text-secondary small">Residential Address</label>
+              <input type="text" name="address" class="form-control form-control-lg bg-light border-0" value="{{ profile['address'] or 'San Antonio, TX' }}">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold text-secondary small">Critical Medical & Emergency Notes</label>
+            <textarea name="emergency_notes" class="form-control bg-light border-0" rows="4" placeholder="Allergies, conditions, pacemaker, access code...">{{ profile['emergency_notes'] or '' }}</textarea>
+            <div class="form-text small">Dispatched to emergency responders during an SOS call.</div>
+          </div>
+
+          <button type="submit" class="btn-3d btn-3d-lime py-3 px-4 fs-5 w-100">
+            <i class="bi bi-check2-circle me-1"></i> Save Safety Settings
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Emergency Contacts in Priority Order (For 2-Minute SOS Escalation) -->
+    <div class="col-lg-6">
+      <div class="card-3d p-4 p-md-5 bg-white h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-0">
+              <i class="bi bi-shield-fill-exclamation text-danger me-2"></i>Emergency Contacts
+            </h3>
+            <span class="small text-secondary">Ordered by SOS Escalation Priority</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-light rounded-4 small text-secondary mb-4">
+          <i class="bi bi-info-circle-fill text-danger me-1"></i> 
+          <strong>What happens during SOS:</strong> Contact #1 is immediately sent an SMS. If nobody replies within <strong>2 minutes</strong>, the system automatically escalates to Contact #2, then #3, until resolved.
+        </div>
+
+        <div class="d-flex flex-column gap-3 mb-4">
+          {% for c in contacts %}
+            <div class="p-3 rounded-4 border d-flex align-items-center justify-content-between bg-white shadow-sm">
+              <div class="d-flex align-items-center gap-3">
+                <div class="badge rounded-circle p-2 bg-danger text-white fs-5 fw-bold d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                  #{{ c['priority_order'] }}
+                </div>
+                <div>
+                  <h5 class="fw-bold text-forest-900 mb-0 fs-6">{{ c['name'] }}</h5>
+                  <div class="small text-secondary"><i class="bi bi-telephone-fill text-success me-1"></i> {{ c['phone'] }} • {{ c['relation'] }}</div>
+                </div>
+              </div>
+              <form action="{{ url_for('senior_profile') }}" method="POST" onsubmit="return confirm('Remove contact?');">
+                <input type="hidden" name="action" value="delete_contact">
+                <input type="hidden" name="contact_id" value="{{ c['id'] }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle p-2" title="Remove contact">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Add Contact Form -->
+        <div class="pt-3 border-top">
+          <h4 class="font-serif fw-bold fs-5 mb-2">Add Contact to Escalation List</h4>
+          <form action="{{ url_for('senior_profile') }}" method="POST">
+            <input type="hidden" name="action" value="add_contact">
+            <div class="row g-2 mb-2">
+              <div class="col-md-6">
+                <input type="text" name="name" class="form-control rounded-pill bg-light border-0 px-3" placeholder="Contact Full Name" required>
+              </div>
+              <div class="col-md-6">
+                <input type="tel" name="phone" class="form-control rounded-pill bg-light border-0 px-3" placeholder="Phone e.g. +1 (210) 555-..." required>
+              </div>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <input type="text" name="relation" class="form-control rounded-pill bg-light border-0 px-3" placeholder="Relation e.g. Son, Neighbor" required>
+              </div>
+              <div class="col-md-6">
+                <input type="number" name="priority_order" class="form-control rounded-pill bg-light border-0 px-3" placeholder="Priority (1, 2, 3...)" value="{{ contacts | length + 1 }}" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-outline-dark rounded-pill fw-bold w-100 py-2">
+              <i class="bi bi-person-plus-fill me-1"></i> Add Contact
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
