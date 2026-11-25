@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ senior['name'] }}'s Health Status - Family View{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Approved Caregiver View</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">{{ senior['name'] }}</h1>
+      <p class="text-secondary fs-5">Full overview of medication adherence, daily check-in streak, and health history.</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('family_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+      </a>
+      <a href="tel:{{ senior['phone'] }}" class="btn-3d btn-3d-lime py-2 px-4">
+        <i class="bi bi-telephone-fill me-1"></i> Call {{ senior['name'].split(' ')[0] }}
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <!-- Senior Profile Quick Card -->
+    <div class="col-lg-4">
+      <div class="card-3d p-4 bg-white h-100">
+        <h4 class="font-serif fw-bold text-forest-900 mb-3">Profile & Details</h4>
+        <div class="d-flex flex-column gap-2 text-secondary small">
+          <div><i class="bi bi-envelope me-2 text-success"></i><strong>Email:</strong> {{ senior['email'] }}</div>
+          <div><i class="bi bi-telephone me-2 text-success"></i><strong>Phone:</strong> {{ senior['phone'] }}</div>
+          <div><i class="bi bi-droplet-half me-2 text-danger"></i><strong>Blood Group:</strong> {{ senior['blood_group'] or 'O+' }}</div>
+          <div><i class="bi bi-geo-alt me-2 text-primary"></i><strong>Address:</strong> {{ senior['address'] or 'San Antonio, TX' }}</div>
+          <div><i class="bi bi-clock me-2 text-warning"></i><strong>Check-in Deadline:</strong> {{ senior['check_in_time'] or '09:00' }} AM</div>
+        </div>
+
+        {% if senior['emergency_notes'] %}
+          <div class="mt-4 p-3 bg-light rounded-4 small border">
+            <strong class="text-danger d-block mb-1"><i class="bi bi-exclamation-triangle-fill"></i> Medical Notes:</strong>
+            {{ senior['emergency_notes'] }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- 7-Day Check-in History -->
+    <div class="col-lg-8">
+      <div class="card-3d p-4 bg-white h-100">
+        <h4 class="font-serif fw-bold text-forest-900 mb-3">7-Day Daily "I am OK" Check-in Log</h4>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Date</th>
+                <th>Check-in Time</th>
+                <th>Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in checkins %}
+                <tr>
+                  <td class="fw-bold">{{ c['checkin_date'] }}</td>
+                  <td>{{ c['checkin_time'] or 'Missed' }}</td>
+                  <td>
+                    {% if c['status'] in ('ok', 'late') %}
+                      <span class="badge bg-success rounded-pill px-3 py-1"><i class="bi bi-check-circle-fill me-1"></i> OK</span>
+                    {% else %}
+                      <span class="badge bg-danger rounded-pill px-3 py-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Missed</span>
+                    {% endif %}
+                  </td>
+                  <td class="small text-muted">{{ c['note'] or '-' }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medicine Compliance & Log -->
+  <div class="card-3d p-4 p-md-5 bg-white mb-5">
+    <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-3">Medication Logs</h3>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Medicine</th>
+            <th>Scheduled Time</th>
+            <th>Recorded At</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in med_logs %}
+            <tr>
+              <td class="fw-bold">{{ log['scheduled_date'] }}</td>
+              <td><span class="fw-bold">{{ log['med_name'] }}</span> ({{ log['med_dose'] }})</td>
+              <td><span class="badge bg-light text-dark border">{{ log['scheduled_time'] }}</span></td>
+              <td>{{ log['logged_at'] or 'Pending' }}</td>
+              <td>
+                {% if log['status'] == 'taken' %}
+                  <span class="badge bg-success rounded-pill px-3 py-1">Taken</span>
+                {% elif log['status'] == 'skipped' %}
+                  <span class="badge bg-secondary rounded-pill px-3 py-1">Skipped</span>
+                {% elif log['status'] == 'missed' %}
+                  <span class="badge bg-danger rounded-pill px-3 py-1">Missed</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Pending</span>
+                {% endif %}
+              </td>
+              <td class="small text-muted">{{ log['note'] or '-' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Doctor Clinical Notes (Allowed by Senior) -->
+  {% if notes %}
+    <div class="card-3d p-4 p-md-5 bg-white">
+      <h3 class="font-serif fw-bold fs-3 text-forest-900 mb-3">Clinical Health Records & Doctor Notes</h3>
+      <div class="d-flex flex-column gap-3">
+        {% for n in notes %}
+          <div class="p-4 rounded-4 border bg-light">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="fw-bold text-forest-900 mb-0">{{ n['title'] }}</h5>
+              <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small">
+                {{ n['record_type'] | replace('_', ' ') | title }}
+              </span>
+            </div>
+            <p class="text-secondary mb-2">{{ n['description'] }}</p>
+            <div class="small text-muted">{{ n['created_at'] }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
