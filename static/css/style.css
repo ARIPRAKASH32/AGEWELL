@@ -135,8 +135,9 @@ h1, h2, h3, .font-serif {
 }
 
 .card-3d:hover {
-  transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
-  box-shadow: 0 28px 45px -12px rgba(13, 44, 34, 0.16), 0 8px 16px -6px rgba(123, 206, 41, 0.1);
+  transform: translateY(-6px) scale(1.006);
+  box-shadow: 0 28px 50px -12px rgba(13, 44, 34, 0.18), 0 0 22px rgba(123, 206, 41, 0.14);
+  border-color: rgba(123, 206, 41, 0.35);
 }
 
 .card-3d-forest {
