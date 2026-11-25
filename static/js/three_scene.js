@@ -1,5 +1,5 @@
-// AGEWELL Senior Independence Portal - Advanced 3D Visualizer Engine
-// Enhanced 3D Animation System with Interactive Holographic Care Capsule & Vitality Physics
+// AGEWELL Senior Independence Portal - Next-Gen 3D Zero-Gravity Care Pod & Orbiting Capsules
+// Features: Floating Crystal Vitality Core + Tumbling 3D Medicine Capsules + Kinetic Gravitational Pulse
 
 function initHero3D(containerId) {
   const container = document.getElementById(containerId);
@@ -7,183 +7,166 @@ function initHero3D(containerId) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.set(0, 0, 7.8);
+  camera.position.set(0, 0, 8.2);
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 1.25;
   container.innerHTML = '';
   container.appendChild(renderer.domElement);
 
-  // Dynamic Lighting Setup
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  // Studio Lighting Setup
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
   scene.add(ambientLight);
 
-  const mainLight = new THREE.DirectionalLight(0x38bdf8, 3.0);
-  mainLight.position.set(6, 6, 6);
-  scene.add(mainLight);
+  const keyLight = new THREE.DirectionalLight(0x8be034, 3.2);
+  keyLight.position.set(6, 6, 6);
+  scene.add(keyLight);
 
-  const blueBacklight = new THREE.PointLight(0x0284c7, 4.0, 30);
-  blueBacklight.position.set(-6, -4, -3);
-  scene.add(blueBacklight);
+  const fillLight = new THREE.PointLight(0xa9ee62, 3.5, 30);
+  fillLight.position.set(-6, -4, 4);
+  scene.add(fillLight);
 
-  const cyanFillLight = new THREE.PointLight(0x06b6d4, 3.5, 25);
-  cyanFillLight.position.set(4, -5, 4);
-  scene.add(cyanFillLight);
+  const rimLight = new THREE.PointLight(0xffffff, 2.5, 25);
+  rimLight.position.set(0, 5, -4);
+  scene.add(rimLight);
 
-  // Main 3D Container Group
+  // Master 3D Group
   const masterGroup = new THREE.Group();
   scene.add(masterGroup);
 
-  // 1. Dual-Tone Holographic Care Capsule (Pill)
-  const capsuleGroup = new THREE.Group();
-  masterGroup.add(capsuleGroup);
+  // 1. Central Faceted Crystal of Vitality (Guardian Core)
+  const coreGroup = new THREE.Group();
+  masterGroup.add(coreGroup);
 
-  // Lower Oceanic Sapphire Capsule Half
-  const lowerGeo = new THREE.CylinderGeometry(1.15, 1.15, 1.4, 32, 1, false);
-  const sapphireMat = new THREE.MeshPhysicalMaterial({
-    color: 0x0f2744,
-    emissive: 0x071324,
-    emissiveIntensity: 0.6,
-    roughness: 0.15,
-    metalness: 0.3,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.1,
-    transmission: 0.45,
-    opacity: 0.95,
-    transparent: true,
-    reflectivity: 0.9
-  });
-  const lowerCyl = new THREE.Mesh(lowerGeo, sapphireMat);
-  lowerCyl.position.y = -0.7;
-  capsuleGroup.add(lowerCyl);
-
-  const lowerBottomGeo = new THREE.SphereGeometry(1.15, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-  const lowerBottom = new THREE.Mesh(lowerBottomGeo, sapphireMat);
-  lowerBottom.position.y = -1.4;
-  capsuleGroup.add(lowerBottom);
-
-  // Upper Vibrant Cyan Capsule Half
-  const upperGeo = new THREE.CylinderGeometry(1.15, 1.15, 1.4, 32, 1, false);
-  const cyanMat = new THREE.MeshPhysicalMaterial({
-    color: 0x0ea5e9,
-    emissive: 0x0284c7,
+  const crystalGeo = new THREE.OctahedronGeometry(1.35, 1);
+  const crystalMat = new THREE.MeshPhysicalMaterial({
+    color: 0x143e31,
+    emissive: 0x081d16,
     emissiveIntensity: 0.6,
     roughness: 0.1,
-    metalness: 0.3,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.05,
-    transmission: 0.4,
-    opacity: 0.96,
+    metalness: 0.15,
+    transmission: 0.6,
+    opacity: 0.95,
     transparent: true,
-    reflectivity: 0.95
+    reflectivity: 0.9,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.1
   });
-  const upperCyl = new THREE.Mesh(upperGeo, cyanMat);
-  upperCyl.position.y = 0.7;
-  capsuleGroup.add(upperCyl);
+  const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+  coreGroup.add(crystal);
 
-  const upperTopGeo = new THREE.SphereGeometry(1.15, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-  const upperTop = new THREE.Mesh(upperTopGeo, cyanMat);
-  upperTop.position.y = 1.4;
-  capsuleGroup.add(upperTop);
+  // Inner Glowing Heart Cross
+  const innerHeartGeo = new THREE.SphereGeometry(0.65, 16, 16);
+  const innerHeartMat = new THREE.MeshBasicMaterial({ color: 0x8be034 });
+  const innerHeart = new THREE.Mesh(innerHeartGeo, innerHeartMat);
+  coreGroup.add(innerHeart);
 
-  // Sleek Central Chrome Ring Divider
-  const dividerGeo = new THREE.TorusGeometry(1.18, 0.06, 16, 64);
-  const dividerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.9, roughness: 0.1 });
-  const divider = new THREE.Mesh(dividerGeo, dividerMat);
-  divider.rotation.x = Math.PI / 2;
-  capsuleGroup.add(divider);
+  const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.75, 0.2), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.2, 0.2), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  coreGroup.add(crossV);
+  coreGroup.add(crossH);
 
-  // 2. Holographic Rotating Care Cross Inside the Capsule
-  const coreCrossGroup = new THREE.Group();
-  capsuleGroup.add(coreCrossGroup);
+  // 2. Realistic 3D Tumbling Medicine Capsules (Orbiting Pills)
+  function createMiniCapsule() {
+    const pill = new THREE.Group();
+    
+    // Bottom Emerald Half
+    const bGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.5, 24);
+    const bMat = new THREE.MeshStandardMaterial({ color: 0x144233, roughness: 0.2, metalness: 0.3 });
+    const bCyl = new THREE.Mesh(bGeo, bMat);
+    bCyl.position.y = -0.25;
+    pill.add(bCyl);
 
-  const crossMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false });
-  const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.9, 0.3), crossMat);
-  const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 0.3), crossMat);
-  coreCrossGroup.add(crossV);
-  coreCrossGroup.add(crossH);
+    const bCap = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 24, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
+      bMat
+    );
+    bCap.position.y = -0.5;
+    pill.add(bCap);
 
-  // DNA / Vital Particles floating inside
-  const dnaCount = 24;
-  const dnaGroup = new THREE.Group();
-  coreCrossGroup.add(dnaGroup);
-  for (let i = 0; i < dnaCount; i++) {
-    const angle = i * 0.45;
-    const y = (i / dnaCount) * 2.2 - 1.1;
-    const p1 = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0x8be034 }));
-    p1.position.set(Math.cos(angle) * 0.55, y, Math.sin(angle) * 0.55);
-    const p2 = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
-    p2.position.set(Math.cos(angle + Math.PI) * 0.55, y, Math.sin(angle + Math.PI) * 0.55);
-    dnaGroup.add(p1);
-    dnaGroup.add(p2);
+    // Top Lime Half
+    const tGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.5, 24);
+    const tMat = new THREE.MeshStandardMaterial({ color: 0x8be034, roughness: 0.15, metalness: 0.2, emissive: 0x5aa219, emissiveIntensity: 0.3 });
+    const tCyl = new THREE.Mesh(tGeo, tMat);
+    tCyl.position.y = 0.25;
+    pill.add(tCyl);
+
+    const tCap = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2),
+      tMat
+    );
+    tCap.position.y = 0.5;
+    pill.add(tCap);
+
+    // Central Silver Ring
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.29, 0.02, 12, 32),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.9, roughness: 0.1 })
+    );
+    ring.rotation.x = Math.PI / 2;
+    pill.add(ring);
+
+    return pill;
   }
 
-  capsuleGroup.rotation.z = Math.PI / 5;
-  capsuleGroup.rotation.x = Math.PI / 10;
+  // Generate 4 Orbiting Capsules at different orbital radii and speeds
+  const orbitingPills = [];
+  const pillConfigs = [
+    { radius: 2.7, speed: 0.65, angle: 0, tiltX: 0.4, tiltZ: 0.2, spinSpeed: 1.5 },
+    { radius: 3.2, speed: -0.5, angle: Math.PI / 2, tiltX: -0.5, tiltZ: 0.6, spinSpeed: 2.0 },
+    { radius: 2.9, speed: 0.8, angle: Math.PI, tiltX: 0.6, tiltZ: -0.4, spinSpeed: 1.2 },
+    { radius: 3.5, speed: -0.4, angle: Math.PI * 1.5, tiltX: -0.3, tiltZ: -0.7, spinSpeed: 1.8 }
+  ];
 
-  // 3. Multi-Layer Gyroscope Orbital Protection Rings
+  pillConfigs.forEach(cfg => {
+    const p = createMiniCapsule();
+    masterGroup.add(p);
+    orbitingPills.push({ mesh: p, ...cfg });
+  });
+
+  // 3. Gyroscope Protective Energy Rings
   const ringsGroup = new THREE.Group();
   masterGroup.add(ringsGroup);
 
-  // Outer Ring 1 (Cyan)
-  const ring1Geo = new THREE.TorusGeometry(2.6, 0.045, 16, 120);
-  const ring1Mat = new THREE.MeshStandardMaterial({
-    color: 0x38bdf8,
-    emissive: 0x0284c7,
-    emissiveIntensity: 0.8,
-    metalness: 0.6,
-    roughness: 0.2
-  });
+  const ring1Geo = new THREE.TorusGeometry(2.8, 0.04, 16, 100);
+  const ring1Mat = new THREE.MeshStandardMaterial({ color: 0x8be034, emissive: 0x5aa219, emissiveIntensity: 0.7 });
   const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
+  ring1.rotation.x = Math.PI / 3;
   ringsGroup.add(ring1);
 
-  // Satellite Orb on Ring 1
-  const sat1 = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-  sat1.position.set(2.6, 0, 0);
-  ring1.add(sat1);
-
-  // Outer Ring 2 (Perpendicular Gyro - Deep Azure)
-  const ring2Geo = new THREE.TorusGeometry(3.1, 0.035, 16, 120);
-  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.65 });
+  const ring2Geo = new THREE.TorusGeometry(3.3, 0.03, 16, 100);
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0xa9ee62, transparent: true, opacity: 0.5 });
   const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+  ring2.rotation.y = Math.PI / 4;
+  ring2.rotation.x = -Math.PI / 6;
   ringsGroup.add(ring2);
 
-  const sat2 = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
-  sat2.position.set(-3.1, 0, 0);
-  ring2.add(sat2);
-
-  // Outer Ring 3 (Inclined Aura - Mint Aqua)
-  const ring3Geo = new THREE.TorusGeometry(3.6, 0.025, 16, 120);
-  const ring3Mat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.45 });
-  const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
-  ringsGroup.add(ring3);
-
-  // 4. Floating Atmospheric Health Constellation (100 Stars)
-  const starCount = 100;
-  const starGeo = new THREE.BufferGeometry();
-  const starPos = new Float32Array(starCount * 3);
-  for (let i = 0; i < starCount * 3; i += 3) {
-    starPos[i] = (Math.random() - 0.5) * 14;
-    starPos[i + 1] = (Math.random() - 0.5) * 12;
-    starPos[i + 2] = (Math.random() - 0.5) * 8;
+  // 4. Stardust Vitality Field (90 particles)
+  const particleCount = 90;
+  const partGeo = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount * 3; i += 3) {
+    positions[i] = (Math.random() - 0.5) * 12;
+    positions[i + 1] = (Math.random() - 0.5) * 10;
+    positions[i + 2] = (Math.random() - 0.5) * 6;
   }
-  starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-  const starMat = new THREE.PointsMaterial({
-    color: 0x38bdf8,
-    size: 0.16,
+  partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const partMat = new THREE.PointsMaterial({
+    color: 0x8be034,
+    size: 0.14,
     transparent: true,
     opacity: 0.85
   });
-  const stars = new THREE.Points(starGeo, starMat);
-  masterGroup.add(stars);
+  const particles = new THREE.Points(partGeo, partMat);
+  masterGroup.add(particles);
 
-  // Mouse Parallax & Interactive Kinetic Pulse
+  // Mouse Parallax & Interactive Kinetic Shockwave
   let mouseX = 0, mouseY = 0;
   let targetX = 0, targetY = 0;
-  let spinVelocity = 0;
+  let pulseIntensity = 0;
 
   const onMouseMove = (e) => {
     const rect = container.getBoundingClientRect();
@@ -192,9 +175,9 @@ function initHero3D(containerId) {
   };
   container.addEventListener('mousemove', onMouseMove);
 
-  // Click on Canvas to trigger kinetic spin pulse
+  // Interactive Click: Gravitational Shockwave
   container.addEventListener('click', () => {
-    spinVelocity += 0.8;
+    pulseIntensity = 1.0;
   });
 
   // Render & Animation Loop
@@ -203,42 +186,51 @@ function initHero3D(containerId) {
     requestAnimationFrame(animate);
     const elapsed = clock.getElapsedTime();
 
-    // Smooth damping
+    // Parallax damping
     targetX += (mouseX - targetX) * 0.05;
     targetY += (mouseY - targetY) * 0.05;
 
-    // Spin velocity decay
-    spinVelocity *= 0.94;
+    // Decay shockwave pulse
+    pulseIntensity *= 0.93;
 
-    // Capsule rotations
-    capsuleGroup.rotation.y = elapsed * 0.5 + spinVelocity;
-    capsuleGroup.rotation.x = Math.sin(elapsed * 0.6) * 0.25 + (Math.PI / 10);
+    // Rotate central crystal & inner heart
+    crystal.rotation.y = elapsed * 0.5;
+    crystal.rotation.x = Math.sin(elapsed * 0.4) * 0.3;
+    const heartScale = 1.0 + Math.sin(elapsed * 3.5) * 0.12 + (pulseIntensity * 0.3);
+    innerHeart.scale.set(heartScale, heartScale, heartScale);
 
-    // Inner DNA & cross counter-rotation
-    coreCrossGroup.rotation.y = -elapsed * 0.8;
+    // Orbiting & tumbling medicine capsules
+    orbitingPills.forEach(p => {
+      p.angle += (p.speed * 0.02) * (1.0 + pulseIntensity * 2.0);
+      const rad = p.radius + (pulseIntensity * 0.6);
+      
+      const x = Math.cos(p.angle) * rad;
+      const z = Math.sin(p.angle) * rad;
+      const y = Math.sin(p.angle * 2.0 + elapsed) * 0.6;
+      
+      p.mesh.position.set(x, y, z);
+      p.mesh.rotation.x = elapsed * p.spinSpeed;
+      p.mesh.rotation.y = elapsed * p.spinSpeed * 0.8;
+      p.mesh.rotation.z = Math.sin(elapsed) * 0.5;
+    });
 
-    // Gyroscope rings rotation
-    ring1.rotation.z = elapsed * 0.45;
-    ring1.rotation.y = Math.sin(elapsed * 0.3) * 0.6;
+    // Orbital rings rotation
+    ring1.rotation.z = elapsed * 0.35;
+    ring1.rotation.y = Math.sin(elapsed * 0.2) * 0.4;
+    ring2.rotation.y = -elapsed * 0.3;
+    ring2.rotation.x = Math.cos(elapsed * 0.25) * 0.5;
 
-    ring2.rotation.x = elapsed * 0.35;
-    ring2.rotation.z = Math.cos(elapsed * 0.25) * 0.5;
+    // Master group tilt
+    masterGroup.rotation.y = targetX * 0.55;
+    masterGroup.rotation.x = -targetY * 0.45;
+    masterGroup.position.y = Math.sin(elapsed * 1.6) * 0.15;
 
-    ring3.rotation.y = -elapsed * 0.2;
-    ring3.rotation.x = Math.sin(elapsed * 0.2) * 0.4;
-
-    // Master hover & mouse parallax
-    masterGroup.rotation.y = targetX * 0.6;
-    masterGroup.rotation.x = -targetY * 0.5;
-    masterGroup.position.y = Math.sin(elapsed * 1.8) * 0.18;
-
-    stars.rotation.y = elapsed * 0.03;
+    particles.rotation.y = elapsed * 0.04;
 
     renderer.render(scene, camera);
   }
   animate();
 
-  // Resize handler
   window.addEventListener('resize', () => {
     if (!container) return;
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -263,18 +255,18 @@ function initWellnessOrb3D(containerId) {
 
   const amb = new THREE.AmbientLight(0xffffff, 0.9);
   scene.add(amb);
-  const dir = new THREE.DirectionalLight(0x38bdf8, 2.8);
+  const dir = new THREE.DirectionalLight(0x8be034, 2.8);
   dir.position.set(4, 4, 4);
   scene.add(dir);
 
   const orbGroup = new THREE.Group();
   scene.add(orbGroup);
 
-  // Faceted Luminous Vitality Core (Oceanic Cyan)
+  // Faceted Emerald Vitality Core
   const sphereGeo = new THREE.IcosahedronGeometry(1.25, 4);
   const sphereMat = new THREE.MeshPhysicalMaterial({
-    color: 0x0ea5e9,
-    emissive: 0x0369a1,
+    color: 0x7bce29,
+    emissive: 0x143e31,
     emissiveIntensity: 0.65,
     roughness: 0.1,
     metalness: 0.2,
@@ -284,15 +276,15 @@ function initWellnessOrb3D(containerId) {
   const sphere = new THREE.Mesh(sphereGeo, sphereMat);
   orbGroup.add(sphere);
 
-  // Outer Heart-Rate Geometric Aura (Cyan Wireframe)
+  // Outer Heart-Rate Geometric Aura (Lime Wireframe)
   const wireGeo = new THREE.IcosahedronGeometry(1.5, 2);
-  const wireMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.45 });
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0xa9ee62, wireframe: true, transparent: true, opacity: 0.45 });
   const wire = new THREE.Mesh(wireGeo, wireMat);
   orbGroup.add(wire);
 
-  // ECG Vitality Pulse Ring (Mint Green)
+  // ECG Lifeline Wave Ring (Bright Sprout Lime)
   const ecgGeo = new THREE.TorusGeometry(1.85, 0.03, 16, 64);
-  const ecgMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.8 });
+  const ecgMat = new THREE.MeshBasicMaterial({ color: 0x8be034, transparent: true, opacity: 0.8 });
   const ecgRing = new THREE.Mesh(ecgGeo, ecgMat);
   ecgRing.rotation.x = Math.PI / 2.5;
   orbGroup.add(ecgRing);
@@ -337,9 +329,9 @@ function initBeacon3D(containerId) {
   scene.add(light);
   scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-  // 3D SOS Heavy Industrial Base
+  // 3D SOS Industrial Base
   const baseGeo = new THREE.CylinderGeometry(1.65, 1.85, 0.5, 32);
-  const baseMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.15 });
+  const baseMat = new THREE.MeshStandardMaterial({ color: 0x081d16, metalness: 0.9, roughness: 0.15 });
   const base = new THREE.Mesh(baseGeo, baseMat);
   base.position.y = -0.55;
   beaconGroup.add(base);
@@ -391,12 +383,10 @@ function initBeacon3D(containerId) {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
     dome.rotation.y = t * 0.4;
-    rotor.rotation.y = t * 4.0; // Fast revolving emergency strobe beam
+    rotor.rotation.y = t * 4.0;
 
-    // Pulsing light intensity
     light.intensity = 2.5 + Math.sin(t * 6.0) * 2.5;
 
-    // Expanding dual wave pulses
     waves.forEach((w, idx) => {
       const progress = ((t + idx * 0.75) % 1.5) / 1.5;
       const scale = 1.0 + progress * 2.4;
