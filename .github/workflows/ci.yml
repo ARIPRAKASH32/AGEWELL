@@ -1,0 +1,15 @@
+name: AGEWELL CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install flask apscheduler werkzeug
+      - name: Run verification
+        run: python -c "import models; models.init_db(); print('DB Verified')"
