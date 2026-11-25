@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Medicines - Senior Independence Portal{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <span class="pill-tag pill-forest mb-1">Prescription Manager</span>
+      <h1 class="font-serif display-5 fw-bold text-forest-900 mb-0">My Medicines & Cabinet</h1>
+      <p class="text-secondary fs-5">All active prescriptions, schedules, and compliance history.</p>
+    </div>
+    <a href="{{ url_for('senior_dashboard') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold">
+      <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+  </div>
+
+  <!-- Active Medicines Grid -->
+  <div class="mb-5">
+    <h3 class="font-serif fw-bold fs-3 mb-3">Active Prescriptions</h3>
+    <div class="row g-4">
+      {% for m in medicines %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card-3d p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-1 fw-bold">
+                  Active
+                </span>
+                <span class="badge bg-light text-dark border rounded-pill">
+                  <i class="bi bi-clock-fill text-success"></i> {{ m['timings'] }}
+                </span>
+              </div>
+              <h4 class="font-serif fw-bold fs-4 text-forest-900 mb-1">{{ m['name'] }}</h4>
+              <div class="fw-bold text-secondary mb-2">{{ m['dose'] }}</div>
+              {% if m['instructions'] %}
+                <div class="p-3 bg-light rounded-4 small text-secondary mb-3">
+                  <strong>Instructions:</strong> {{ m['instructions'] }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="pt-3 border-top">
+              <form action="{{ url_for('senior_medicine_action') }}" method="POST" class="d-flex gap-2">
+                <input type="hidden" name="med_id" value="{{ m['id'] }}">
+                <input type="hidden" name="time" value="{{ m['timings'].split(',')[0].strip() }}">
+                <input type="hidden" name="action" value="taken">
+                <button type="submit" class="btn-3d btn-3d-lime w-100 py-2 fs-6">
+                  <i class="bi bi-check-lg"></i> Mark Dose Taken
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Log History (Audited Compliance) -->
+  <div class="card-3d p-4 p-md-5 bg-white">
+    <h3 class="font-serif fw-bold fs-3 mb-3">Recent Medication Activity Log</h3>
+    <p class="text-secondary small mb-4">Every recorded dose is time-stamped. If a scheduled medicine is not marked within 30 minutes, your family is automatically alerted.</p>
+    
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Medicine</th>
+            <th>Scheduled Time</th>
+            <th>Logged At</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td class="fw-bold">{{ log['scheduled_date'] }}</td>
+              <td>
+                <span class="fw-bold text-forest-900">{{ log['med_name'] }}</span>
+                <span class="text-muted small">({{ log['med_dose'] }})</span>
+              </td>
+              <td><span class="badge bg-light text-dark border">{{ log['scheduled_time'] }}</span></td>
+              <td>{{ log['logged_at'] or 'Pending' }}</td>
+              <td>
+                {% if log['status'] == 'taken' %}
+                  <span class="badge bg-success text-white px-3 py-1 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Taken</span>
+                {% elif log['status'] == 'skipped' %}
+                  <span class="badge bg-secondary text-white px-3 py-1 rounded-pill">Skipped</span>
+                {% elif log['status'] == 'missed' %}
+                  <span class="badge bg-danger text-white px-3 py-1 rounded-pill"><i class="bi bi-exclamation-triangle-fill me-1"></i> Missed</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark px-3 py-1 rounded-pill">Pending</span>
+                {% endif %}
+              </td>
+              <td class="small text-secondary">{{ log['note'] or '-' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
