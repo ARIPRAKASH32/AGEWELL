@@ -80,6 +80,43 @@ h1, h2, h3, .font-serif {
   letter-spacing: -0.02em;
 }
 
+/* Color & Contrast Utility Classes */
+.text-lime {
+  color: #8be034 !important;
+  text-shadow: 0 0 16px rgba(139, 224, 52, 0.45);
+}
+
+.text-lime-bright {
+  color: #a9ee62 !important;
+}
+
+.text-forest-900 {
+  color: var(--primary-900) !important;
+}
+
+.text-forest-800 {
+  color: var(--primary-800) !important;
+}
+
+.text-forest-700 {
+  color: var(--primary-700) !important;
+}
+
+.text-forest-600 {
+  color: var(--primary-600) !important;
+}
+
+.text-forest {
+  color: var(--primary-900) !important;
+}
+
+.badge.bg-light,
+.badge.bg-light.text-forest-900 {
+  color: var(--primary-900) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
 /* 3D Global Perspective */
 .perspective-container {
   perspective: 1200px;
@@ -109,8 +146,25 @@ h1, h2, h3, .font-serif {
   box-shadow: 0 20px 40px -10px rgba(8, 29, 22, 0.5);
 }
 
-.card-3d-forest h1, .card-3d-forest h2, .card-3d-forest h3 {
+.card-3d-forest h1, 
+.card-3d-forest h2, 
+.card-3d-forest h3,
+.card-3d-forest h4,
+.card-3d-forest h5,
+.card-3d-forest h6,
+.card-3d-forest .font-serif {
   color: #ffffff;
+}
+
+.card-3d-forest .text-lime,
+.card-3d-forest .display-2.text-lime,
+.card-3d-forest .display-1.text-lime {
+  color: #8be034 !important;
+  text-shadow: 0 0 20px rgba(139, 224, 52, 0.6);
+}
+
+.card-3d-forest .text-white-50 {
+  color: rgba(255, 255, 255, 0.75) !important;
 }
 
 .card-3d-forest:hover {
