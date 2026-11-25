@@ -1,8 +1,8 @@
-// AGEWELL Senior Independence Portal - Next-Gen 3D Biometric Helix & Particle Effects Engine
+// AGEWELL Senior Independence Portal - Dynamic Morphing 3D Care Sphere & Holographic Effects
 // Features:
-// 1. Hero: 3D Vitality Double-Helix + Geodesic Shield + Bioluminescent Particle Aura + Click Energy Burst
-// 2. Wellness Orb: Living Heartbeat TorusKnot + Dual Orbital Rings + Stardust
-// 3. SOS Beacon: Holographic Emergency Radar + Pulsing Crimson Core + Triple Shockwave Rings
+// 1. Hero: Real-time Vertex-Morphing Liquid Emerald Sphere + Orbiting Satellites + Click Shockwave
+// 2. Wellness/Login Orb: Faceted Emerald Diamond + Counter-Rotating Wireframe Cage + Dual Halos
+// 3. SOS Beacon: 3D Rotating Crimson Medical Cross + Strobe Wireframe + Triple Shockwave Rings
 
 function initHero3D(containerId) {
   const container = document.getElementById(containerId);
@@ -10,7 +10,7 @@ function initHero3D(containerId) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.set(0, 0, 9.2);
+  camera.position.set(0, 0, 8.5);
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -23,11 +23,11 @@ function initHero3D(containerId) {
   // Studio Lighting
   scene.add(new THREE.AmbientLight(0xffffff, 0.85));
 
-  const keyLight = new THREE.DirectionalLight(0x8be034, 3.2);
-  keyLight.position.set(6, 8, 6);
+  const keyLight = new THREE.DirectionalLight(0x8be034, 3.4);
+  keyLight.position.set(6, 7, 6);
   scene.add(keyLight);
 
-  const fillLight = new THREE.PointLight(0xa9ee62, 3.5, 30);
+  const fillLight = new THREE.PointLight(0xa9ee62, 3.2, 30);
   fillLight.position.set(-6, -4, 5);
   scene.add(fillLight);
 
@@ -38,132 +38,93 @@ function initHero3D(containerId) {
   const masterGroup = new THREE.Group();
   scene.add(masterGroup);
 
-  // 1. 3D Vitality Double-Helix
-  const helixGroup = new THREE.Group();
-  helixGroup.rotation.z = 0.35; // Dynamic diagonal tilt
-  masterGroup.add(helixGroup);
+  // 1. Real-time Vertex-Morphing Liquid Emerald Sphere
+  const morphGeo = new THREE.IcosahedronGeometry(1.75, 4);
+  const basePositions = Float32Array.from(morphGeo.attributes.position.array);
 
-  const strandMatA = new THREE.MeshStandardMaterial({
-    color: 0x8be034,
-    emissive: 0x5aa219,
-    emissiveIntensity: 0.55,
-    roughness: 0.15,
-    metalness: 0.25
-  });
-
-  const strandMatB = new THREE.MeshStandardMaterial({
+  const morphMat = new THREE.MeshPhysicalMaterial({
     color: 0x143e31,
     emissive: 0x0d2c22,
-    emissiveIntensity: 0.4,
-    roughness: 0.2,
-    metalness: 0.5
-  });
-
-  const rungMat = new THREE.MeshStandardMaterial({
-    color: 0xe2e8f0,
-    metalness: 0.8,
-    roughness: 0.2,
+    emissiveIntensity: 0.55,
+    roughness: 0.12,
+    metalness: 0.25,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.08,
     transparent: true,
-    opacity: 0.75
+    opacity: 0.88,
+    wireframe: false
   });
+  const morphSphere = new THREE.Mesh(morphGeo, morphMat);
+  masterGroup.add(morphSphere);
 
-  const nodeCount = 16;
-  const helixHeight = 4.6;
-  const helixRadius = 1.05;
-
-  for (let i = 0; i < nodeCount; i++) {
-    const t = i / (nodeCount - 1);
-    const y = (t - 0.5) * helixHeight;
-    const angle = t * Math.PI * 3.2;
-
-    const x1 = Math.cos(angle) * helixRadius;
-    const z1 = Math.sin(angle) * helixRadius;
-    const x2 = Math.cos(angle + Math.PI) * helixRadius;
-    const z2 = Math.sin(angle + Math.PI) * helixRadius;
-
-    const nodeA = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), strandMatA);
-    nodeA.position.set(x1, y, z1);
-    helixGroup.add(nodeA);
-
-    const nodeB = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), strandMatB);
-    nodeB.position.set(x2, y, z2);
-    helixGroup.add(nodeB);
-
-    // Connecting Rung
-    const rungGeo = new THREE.CylinderGeometry(0.035, 0.035, helixRadius * 2, 8);
-    const rung = new THREE.Mesh(rungGeo, rungMat);
-    rung.position.set(0, y, 0);
-    rung.rotation.z = Math.PI / 2;
-    rung.rotation.y = -angle;
-    helixGroup.add(rung);
-  }
-
-  // 2. Protective Geodesic Wireframe Shield
-  const shieldGeo = new THREE.IcosahedronGeometry(2.65, 1);
-  const shieldMat = new THREE.MeshBasicMaterial({
+  // Wireframe Overlay for holographic depth
+  const wireMat = new THREE.MeshBasicMaterial({
     color: 0x8be034,
     wireframe: true,
     transparent: true,
-    opacity: 0.18
+    opacity: 0.22
   });
-  const shield = new THREE.Mesh(shieldGeo, shieldMat);
-  masterGroup.add(shield);
+  const wireOverlay = new THREE.Mesh(morphGeo, wireMat);
+  wireOverlay.scale.set(1.015, 1.015, 1.015);
+  masterGroup.add(wireOverlay);
 
-  // 3. Orbiting Care Satellites & Rings
-  const orbitRing1 = new THREE.Mesh(
-    new THREE.TorusGeometry(3.15, 0.02, 12, 64),
-    new THREE.MeshBasicMaterial({ color: 0x8be034, transparent: true, opacity: 0.45 })
+  // Inner Glowing Sprout-Lime Core
+  const innerCore = new THREE.Mesh(
+    new THREE.SphereGeometry(0.85, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0x8be034 })
   );
-  orbitRing1.rotation.x = Math.PI / 2.6;
-  orbitRing1.rotation.y = 0.3;
-  masterGroup.add(orbitRing1);
+  masterGroup.add(innerCore);
 
-  const orbitRing2 = new THREE.Mesh(
-    new THREE.TorusGeometry(3.45, 0.015, 12, 64),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 })
-  );
-  orbitRing2.rotation.x = -Math.PI / 3;
-  orbitRing2.rotation.y = -0.4;
-  masterGroup.add(orbitRing2);
+  // 2. Orbiting Care Satellites on Tilted Gyroscopic Rings
+  const satellites = [];
+  const satConfigs = [
+    { radius: 2.75, speed: 0.9, tiltX: 0.5, tiltZ: 0.2, color: 0x8be034 },
+    { radius: 3.15, speed: -0.7, tiltX: -0.6, tiltZ: 0.5, color: 0xa9ee62 },
+    { radius: 3.45, speed: 0.55, tiltX: 0.2, tiltZ: -0.7, color: 0xffffff }
+  ];
 
-  // 4. Bioluminescent Particle Aura
-  const particleCount = 110;
-  const particleGeo = new THREE.BufferGeometry();
-  const particlePositions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount * 3; i += 3) {
-    const r = 2.4 + Math.random() * 2.8;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    particlePositions[i] = r * Math.sin(phi) * Math.cos(theta);
-    particlePositions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
-    particlePositions[i + 2] = r * Math.cos(phi);
-  }
-  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-  const particleMat = new THREE.PointsMaterial({
-    color: 0xa9ee62,
-    size: 0.075,
-    transparent: true,
-    opacity: 0.85
+  satConfigs.forEach((cfg) => {
+    const orbitGroup = new THREE.Group();
+    orbitGroup.rotation.x = cfg.tiltX;
+    orbitGroup.rotation.z = cfg.tiltZ;
+
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(cfg.radius, 0.015, 12, 64),
+      new THREE.MeshBasicMaterial({ color: cfg.color, transparent: true, opacity: 0.35 })
+    );
+    ring.rotation.x = Math.PI / 2;
+    orbitGroup.add(ring);
+
+    const sat = new THREE.Mesh(
+      new THREE.SphereGeometry(0.16, 16, 16),
+      new THREE.MeshStandardMaterial({
+        color: cfg.color,
+        emissive: cfg.color,
+        emissiveIntensity: 0.6,
+        roughness: 0.15,
+        metalness: 0.4
+      })
+    );
+    orbitGroup.add(sat);
+    masterGroup.add(orbitGroup);
+    satellites.push({ sat, radius: cfg.radius, speed: cfg.speed });
   });
-  const particles = new THREE.Points(particleGeo, particleMat);
-  masterGroup.add(particles);
 
-  // 5. Interactive Click Shockwave Ring
-  const burstGeo = new THREE.RingGeometry(0.8, 0.98, 48);
+  // 3. Interactive Click Shockwave Ring
   const burstMat = new THREE.MeshBasicMaterial({
     color: 0x8be034,
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0
   });
-  const burstRing = new THREE.Mesh(burstGeo, burstMat);
+  const burstRing = new THREE.Mesh(new THREE.RingGeometry(1.1, 1.3, 48), burstMat);
   masterGroup.add(burstRing);
 
   let mouseX = 0;
   let mouseY = 0;
   let burstActive = false;
   let burstScale = 1;
-  let spinBoost = 0;
+  let morphBoost = 0;
 
   container.addEventListener('mousemove', (e) => {
     const rect = container.getBoundingClientRect();
@@ -175,7 +136,7 @@ function initHero3D(containerId) {
     burstActive = true;
     burstScale = 1;
     burstMat.opacity = 0.9;
-    spinBoost = 0.14;
+    morphBoost = 0.28;
   });
 
   const clock = new THREE.Clock();
@@ -184,30 +145,38 @@ function initHero3D(containerId) {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
-    // Smooth helix rotation + click boost
-    spinBoost *= 0.94;
-    helixGroup.rotation.y += 0.014 + spinBoost;
-    helixGroup.position.y = Math.sin(t * 1.4) * 0.18;
+    morphBoost *= 0.93;
+    const amp = 0.12 + morphBoost;
 
-    // Geodesic shield breathing
-    shield.rotation.y -= 0.004;
-    shield.rotation.x += 0.002;
-    const breathe = 1 + Math.sin(t * 2) * 0.03;
-    shield.scale.set(breathe, breathe, breathe);
+    // Vertex morphing wave
+    const pos = morphGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const bx = basePositions[i * 3];
+      const by = basePositions[i * 3 + 1];
+      const bz = basePositions[i * 3 + 2];
+      const wave = Math.sin(bx * 2.2 + t * 2.4) * Math.cos(by * 2.2 + t * 1.9) * Math.sin(bz * 2.2 + t * 2.1);
+      const scale = 1 + wave * amp;
+      pos.setXYZ(i, bx * scale, by * scale, bz * scale);
+    }
+    pos.needsUpdate = true;
+    morphGeo.computeVertexNormals();
 
-    // Rings & Particles
-    orbitRing1.rotation.z += 0.008;
-    orbitRing2.rotation.z -= 0.006;
-    particles.rotation.y += 0.003;
-    particles.rotation.x = Math.sin(t * 0.4) * 0.15;
+    morphSphere.rotation.y += 0.006;
+    wireOverlay.rotation.y += 0.006;
 
-    // Mouse parallax
+    const corePulse = 1 + Math.sin(t * 2.6) * 0.08;
+    innerCore.scale.set(corePulse, corePulse, corePulse);
+
+    satellites.forEach((s) => {
+      const a = t * s.speed;
+      s.sat.position.set(Math.cos(a) * s.radius, 0, Math.sin(a) * s.radius);
+    });
+
     masterGroup.rotation.y += (mouseX * 0.45 - masterGroup.rotation.y) * 0.06;
     masterGroup.rotation.x += (mouseY * 0.35 - masterGroup.rotation.x) * 0.06;
 
-    // Click energy burst
     if (burstActive) {
-      burstScale += 0.16;
+      burstScale += 0.15;
       burstRing.scale.set(burstScale, burstScale, 1);
       burstMat.opacity -= 0.03;
       if (burstMat.opacity <= 0) {
@@ -228,14 +197,14 @@ function initHero3D(containerId) {
   });
 }
 
-// Senior Dashboard: Living Heartbeat TorusKnot & Dual Orbital Rings
+// Senior Dashboard & Login Panel: Faceted Emerald Diamond + Counter-Rotating Wireframe Cage
 function initWellnessOrb(containerId) {
   const container = document.getElementById(containerId);
   if (!container || typeof THREE === 'undefined') return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 0, 5.2);
+  camera.position.set(0, 0, 5.0);
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -244,64 +213,63 @@ function initWellnessOrb(containerId) {
   container.appendChild(renderer.domElement);
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-  const light = new THREE.PointLight(0x8be034, 3.5, 20);
+  const light = new THREE.PointLight(0x8be034, 3.8, 20);
   light.position.set(3, 4, 4);
   scene.add(light);
 
-  const knotGeo = new THREE.TorusKnotGeometry(0.95, 0.28, 100, 16);
-  const knotMat = new THREE.MeshPhysicalMaterial({
-    color: 0x7bce29,
-    emissive: 0x143e31,
-    emissiveIntensity: 0.45,
-    roughness: 0.15,
-    metalness: 0.3,
-    clearcoat: 1.0
-  });
-  const knot = new THREE.Mesh(knotGeo, knotMat);
-  scene.add(knot);
-
-  const ringA = new THREE.Mesh(
-    new THREE.TorusGeometry(1.75, 0.025, 12, 48),
-    new THREE.MeshBasicMaterial({ color: 0xa9ee62, transparent: true, opacity: 0.55 })
+  const diamond = new THREE.Mesh(
+    new THREE.OctahedronGeometry(1.15, 0),
+    new THREE.MeshPhysicalMaterial({
+      color: 0x7bce29,
+      emissive: 0x143e31,
+      emissiveIntensity: 0.5,
+      roughness: 0.12,
+      metalness: 0.35,
+      clearcoat: 1.0
+    })
   );
-  ringA.rotation.x = Math.PI / 3;
-  scene.add(ringA);
+  scene.add(diamond);
 
-  const ringB = new THREE.Mesh(
-    new THREE.TorusGeometry(2.0, 0.015, 12, 48),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3 })
+  const cage = new THREE.Mesh(
+    new THREE.OctahedronGeometry(1.55, 0),
+    new THREE.MeshBasicMaterial({ color: 0xa9ee62, wireframe: true, transparent: true, opacity: 0.45 })
   );
-  ringB.rotation.y = Math.PI / 3;
-  scene.add(ringB);
+  scene.add(cage);
+
+  const halo = new THREE.Mesh(
+    new THREE.TorusGeometry(1.9, 0.02, 12, 48),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 })
+  );
+  halo.rotation.x = Math.PI / 2.4;
+  scene.add(halo);
 
   const clock = new THREE.Clock();
   function animate() {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
-    knot.rotation.y += 0.015;
-    knot.rotation.x += 0.008;
+    diamond.rotation.y += 0.018;
+    diamond.rotation.x = Math.sin(t * 1.2) * 0.25;
+    cage.rotation.y -= 0.012;
+    cage.rotation.z += 0.008;
+    halo.rotation.z += 0.015;
 
-    // Calm 60 BPM heartbeat pulse
-    const pulse = 1 + Math.pow(Math.sin(t * 2.2), 4) * 0.09;
-    knot.scale.set(pulse, pulse, pulse);
-
-    ringA.rotation.z += 0.02;
-    ringB.rotation.z -= 0.015;
+    const pulse = 1 + Math.pow(Math.sin(t * 2.2), 4) * 0.08;
+    diamond.scale.set(pulse, pulse, pulse);
 
     renderer.render(scene, camera);
   }
   animate();
 }
 
-// SOS Emergency Screen: Holographic Emergency Radar & Triple Shockwave Rings
+// SOS Emergency Screen: 3D Rotating Crimson Medical Cross + Triple Shockwave Rings
 function initSOSBeacon(containerId) {
   const container = document.getElementById(containerId);
   if (!container || typeof THREE === 'undefined') return;
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(0, 2.2, 5.6);
+  camera.position.set(0, 2.0, 5.6);
   camera.lookAt(0, 0, 0);
 
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -310,32 +278,32 @@ function initSOSBeacon(containerId) {
   container.innerHTML = '';
   container.appendChild(renderer.domElement);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.75));
   const redLight = new THREE.PointLight(0xff2a2a, 5, 25);
   redLight.position.set(0, 2, 2);
   scene.add(redLight);
 
-  // Industrial Base
-  const base = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.1, 1.3, 0.45, 32),
-    new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.85, roughness: 0.2 })
-  );
-  base.position.y = -0.6;
-  scene.add(base);
+  // 3D Crimson Medical Cross
+  const crossGroup = new THREE.Group();
+  const crossMat = new THREE.MeshStandardMaterial({
+    color: 0xef4444,
+    emissive: 0xdc2626,
+    emissiveIntensity: 0.9,
+    roughness: 0.15,
+    metalness: 0.3
+  });
+  const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.45, 0.45), crossMat);
+  const hBar = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.45, 0.45), crossMat);
+  crossGroup.add(vBar, hBar);
+  crossGroup.position.y = 0.35;
+  scene.add(crossGroup);
 
-  // Pulsing Crimson Octahedron Core
-  const core = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.85, 0),
-    new THREE.MeshStandardMaterial({
-      color: 0xef4444,
-      emissive: 0xdc2626,
-      emissiveIntensity: 0.9,
-      roughness: 0.1,
-      metalness: 0.3
-    })
+  const shieldSphere = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.25, 1),
+    new THREE.MeshBasicMaterial({ color: 0xef4444, wireframe: true, transparent: true, opacity: 0.25 })
   );
-  core.position.y = 0.35;
-  scene.add(core);
+  shieldSphere.position.y = 0.35;
+  scene.add(shieldSphere);
 
   // Triple Staggered Shockwave Rings
   const waves = [];
@@ -348,7 +316,7 @@ function initSOSBeacon(containerId) {
     });
     const wave = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.05, 48), waveMat);
     wave.rotation.x = Math.PI / 2;
-    wave.position.y = -0.35;
+    wave.position.y = -0.45;
     wave.userData = { phase: i * (Math.PI * 2 / 3) };
     scene.add(wave);
     waves.push(wave);
@@ -359,9 +327,10 @@ function initSOSBeacon(containerId) {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
 
-    core.rotation.y += 0.04;
-    const s = 1 + Math.sin(t * 6) * 0.12;
-    core.scale.set(s, s, s);
+    crossGroup.rotation.y += 0.035;
+    shieldSphere.rotation.y -= 0.015;
+    const s = 1 + Math.sin(t * 6) * 0.1;
+    crossGroup.scale.set(s, s, s);
     redLight.intensity = 3.5 + Math.sin(t * 8) * 2.0;
 
     waves.forEach((w) => {
