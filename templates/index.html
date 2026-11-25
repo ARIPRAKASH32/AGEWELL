@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block title %}Providing Peace Of Mind With Personalized In Home Senior Care{% endblock %}
+
+{% block content %}
+<div class="container pb-5">
+
+  <!-- HERO SECTION (Matching uploaded image) -->
+  <section class="card-3d card-3d-forest p-4 p-lg-5 mb-5 position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(123, 206, 41, 0.2); border: 1px solid rgba(123, 206, 41, 0.4);">
+          <i class="bi bi-shield-check text-success fs-5"></i>
+          <span class="text-white small fw-bold text-uppercase">Senior Independence Portal</span>
+        </div>
+        <h1 class="display-4 fw-bold mb-3 font-serif text-white lh-sm">
+          Providing Peace Of Mind With Personalized In Home Senior Care
+        </h1>
+        <p class="lead text-white-50 mb-4 fs-5">
+          In San Antonio and All Surrounding Areas. Empowering elderly citizens to manage medicines, appointments, and daily check-ins autonomously, while automatically alerting family and doctors when help is needed.
+        </p>
+
+        <!-- Interactive Quick Consultation / Contact Card -->
+        <div class="card p-3 rounded-4 border-0 shadow-lg text-dark mb-4" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px);">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold text-dark font-serif fs-5">Don't delay to talk with us</span>
+            <div class="d-flex gap-2">
+              <span class="badge rounded-pill bg-light text-secondary border">Contact Method</span>
+              <span class="badge rounded-pill bg-light text-secondary border">Best Time</span>
+            </div>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" class="form-control rounded-pill bg-light border-0 py-2 px-3 small" placeholder="Your Name">
+            </div>
+            <div class="col-md-4">
+              <input type="email" class="form-control rounded-pill bg-light border-0 py-2 px-3 small" placeholder="Email Address">
+            </div>
+            <div class="col-md-4">
+              <input type="tel" class="form-control rounded-pill bg-light border-0 py-2 px-3 small" placeholder="Phone Number">
+            </div>
+            <div class="col-12 mt-2 d-flex gap-2 align-items-center">
+              <input type="text" class="form-control rounded-pill bg-light border-0 py-2 px-3 small flex-grow-1" placeholder="Write your message...">
+              <button class="btn btn-3d btn-3d-lime rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;" title="Send inquiry">
+                <i class="bi bi-arrow-up-right fs-5"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access Portals -->
+        <div class="d-flex flex-wrap gap-3">
+          {% if current_role %}
+            <a href="{% if current_role == 'senior' %}{{ url_for('senior_dashboard') }}{% elif current_role == 'family' %}{{ url_for('family_dashboard') }}{% elif current_role == 'doctor' %}{{ url_for('doctor_dashboard') }}{% else %}{{ url_for('admin_dashboard') }}{% endif %}" class="btn-3d btn-3d-lime py-3 px-5 fs-5">
+              Enter Your Dashboard <i class="bi bi-arrow-right-circle-fill"></i>
+            </a>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="btn-3d btn-3d-lime py-3 px-4 fs-6">
+              Launch Portal <i class="bi bi-box-arrow-in-right"></i>
+            </a>
+            <a href="{{ url_for('senior_sos') }}" class="btn-3d btn-3d-danger py-3 px-4 fs-6">
+              <i class="bi bi-exclamation-triangle-fill"></i> Emergency SOS Demo
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 3D Interactive Three.js Hero Canvas -->
+      <div class="col-lg-6">
+        <div class="position-relative">
+          <div id="hero-3d-canvas" class="canvas-3d-hero"></div>
+          <div class="position-absolute bottom-0 start-0 m-3 p-3 rounded-4 shadow-lg" style="background: rgba(13, 44, 34, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(139, 224, 52, 0.3);">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-success text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <i class="bi bi-activity fs-5"></i>
+              </div>
+              <div>
+                <div class="text-white fw-bold small">Interactive 3D Health Guardian</div>
+                <div class="text-white-50 small">Move mouse over the 3D capsule to interact</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR (Exact match to image: 194+, 132+, Since 2009) -->
+  <section class="stats-banner mb-5">
+    <div class="row text-center text-md-start g-4">
+      <div class="col-md-4 stat-item border-md-end border-dark border-opacity-10">
+        <h2>194<span class="fs-3 fw-bold">+</span></h2>
+        <p class="stat-title">Total Clients</p>
+        <p class="stat-desc mb-0">Total clients trust us in our best in-home caregiver service.</p>
+      </div>
+      <div class="col-md-4 stat-item border-md-end border-dark border-opacity-10">
+        <h2>132<span class="fs-3 fw-bold">+</span></h2>
+        <p class="stat-title">Total Testimonials</p>
+        <p class="stat-desc mb-0">Total testimonials they provide will be experiencing our services.</p>
+      </div>
+      <div class="col-md-4 stat-item">
+        <h2>Since 2009</h2>
+        <p class="stat-title">Starting Journey</p>
+        <p class="stat-desc mb-0">We began services in 2009 in the heart of the hill country.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO WE ARE & THE SENIOR BUDDIES DIFFERENCE (Matching image layout) -->
+  <section class="mb-5">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <div class="card-3d p-4 p-md-5">
+          <div class="mb-4">
+            <h3 class="font-serif fw-bold fs-2 text-forest-900 mb-2">Who We Are</h3>
+            <p class="text-secondary small">
+              Senior Buddies, established in 2009, is a family-owned in-home care service born from our own experience caring for aging parents. We believe in keeping loved ones safe at home, with family at the heart of our values and compassionate care at the core of everything we do.
+            </p>
+          </div>
+          <div class="border-top border-success border-opacity-25 pt-3 mb-4">
+            <h3 class="font-serif fw-bold fs-2 text-forest-900 mb-2">What We Do</h3>
+            <p class="text-secondary small">
+              At Senior Buddies, we provide trusted in-home care for seniors and others who need help with daily living. From light tasks to personal assistance, we're here to support your family so you can rest easy knowing your loved ones are in compassionate hands.
+            </p>
+          </div>
+          <div class="border-top border-success border-opacity-25 pt-3">
+            <h3 class="font-serif fw-bold fs-2 text-forest-900 mb-2">Our Mission</h3>
+            <p class="text-secondary small mb-0">
+              Senior Buddies is committed to delivering dignified, compassionate care that allows seniors to age comfortably at home. Our focus is on providing personalized support, ensuring the safety, well-being, and peace of mind that every family deserves.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Difference Dark Forest Card with 3D Banner -->
+      <div class="col-lg-6">
+        <div class="card-3d card-3d-forest p-4 p-md-5 position-relative overflow-hidden">
+          <div class="mb-4">
+            <div class="difference-badge-3d mb-4">
+              DIFFERENCE
+            </div>
+            <h2 class="display-6 font-serif fw-bold text-white mb-3">The Senior Buddies Difference</h2>
+            <p class="text-white-50">
+              Because Senior Buddies Grew Out Of A Personal Need For Our Own Parents, Family Remains One Of The Most Cherished Core Values Upon Which Our Service Is Built. Senior Buddies Began Their Services In The Leon Springs Area, And We Consider It A Privilege To Serve The Families Of Our Community. When An Individual's Care Exceeds That Which A Family Can Provide, Senior Buddies Can Ease The Physical And Emotional Demands Of Family Caregiving.
+            </p>
+          </div>
+          <a href="tel:2105550848" class="btn-3d btn-3d-lime">
+            Contact Us <i class="bi bi-telephone-fill ms-1"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPASSIONATE CARE TAILORED SERVICES (Matching image) -->
+  <section class="mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <span class="text-success text-uppercase fw-bold small">Our Services</span>
+        <h2 class="font-serif display-6 fw-bold">Compassionate Care Tailored for Your Loved Ones</h2>
+        <p class="text-secondary mb-0" style="max-width: 650px;">
+          We offer professional caregiving services to ensure comfort, independence, and well-being. From personal care to companionship and medical assistance, our dedicated team is here to provide reliable and heartfelt support.
+        </p>
+      </div>
+      <div class="d-flex gap-2 mt-3 mt-md-0">
+        <a href="{{ url_for('login') }}" class="btn-3d btn-3d-forest">Sign In To Access</a>
+      </div>
+    </div>
+
+    <!-- 4 Featured Services from image -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-6 col-lg-3">
+        <div class="card-3d p-4 h-100">
+          <div class="bg-light rounded-4 p-3 mb-3 text-center">
+            <i class="bi bi-people-fill fs-1 text-success"></i>
+          </div>
+          <h4 class="font-serif fw-bold fs-5 mb-2">Companionship</h4>
+          <p class="text-secondary small mb-3">For those who need a little more comfort and assistance around the house, joyful conversation and walks.</p>
+          <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill px-3 py-2 small">Service Details</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-3d p-4 h-100">
+          <div class="bg-light rounded-4 p-3 mb-3 text-center">
+            <i class="bi bi-droplet-half fs-1 text-primary"></i>
+          </div>
+          <h4 class="font-serif fw-bold fs-5 mb-2">Bathing</h4>
+          <p class="text-secondary small mb-3">We provide safety reminders and assist in bathing needs with complete dignity and care.</p>
+          <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill px-3 py-2 small">Service Details</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-3d p-4 h-100">
+          <div class="bg-light rounded-4 p-3 mb-3 text-center">
+            <i class="bi bi-stars fs-1 text-warning"></i>
+          </div>
+          <h4 class="font-serif fw-bold fs-5 mb-2">Light Housekeeping</h4>
+          <p class="text-secondary small mb-3">Keep your loved one's living environment tidy and clean with light housekeeping assistance.</p>
+          <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill px-3 py-2 small">Service Details</span>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card-3d p-4 h-100">
+          <div class="bg-light rounded-4 p-3 mb-3 text-center">
+            <i class="bi bi-cart3 fs-1 text-danger"></i>
+          </div>
+          <h4 class="font-serif fw-bold fs-5 mb-2">Errands and Shopping</h4>
+          <p class="text-secondary small mb-3">Let us simplify your day by shopping and running errands that take up time and energy.</p>
+          <span class="badge bg-light text-success border border-success border-opacity-25 rounded-pill px-3 py-2 small">Service Details</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NUMBERED SPECIALTY CARE CARDS (01 - 07 from image) -->
+    <div class="mb-4">
+      <h3 class="font-serif fw-bold fs-3 mb-3">We Support Your Family During a Time of Transition or Recovery</h3>
+      <p class="text-secondary">Personal care to companionship and medical assistance, our dedicated team is here to provide reliable and heartfelt support.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- 01 Active Lime Card -->
+      <div class="col-md-4">
+        <div class="service-num-card active-lime h-100">
+          <div class="num-badge">01</div>
+          <h4 class="fw-bold font-serif mb-2">Hourly In Home Care</h4>
+          <p class="small mb-4">
+            If a minimal block of time will help to provide support with daily activities and needs, a Senior Buddies caregiver is available on an hourly basis to help make your day run smoothly. We provide service in San Antonio, Leon Springs, Fair Oaks, and surrounding areas.
+          </p>
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-dark rounded-pill px-3 py-2 fw-bold">
+            Learn More <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="service-num-card h-100">
+          <div class="num-badge">02</div>
+          <h4 class="fw-bold font-serif mb-2">24/7 In Home Care</h4>
+          <p class="small text-secondary mb-0">
+            Senior Buddies offers personalized service options which include 24/7 care plans. A team of our professionals ensures safety around the clock.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="service-num-card h-100">
+          <div class="num-badge">03</div>
+          <h4 class="fw-bold font-serif mb-2">Hospital to Home Care</h4>
+          <p class="small text-secondary mb-0">
+            Among senior hospital patients, readmission is not uncommon in the first 30 days after discharge. We ensure seamless medication and recovery transition.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="service-num-card h-100">
+          <div class="num-badge">04</div>
+          <h4 class="fw-bold font-serif mb-2">Respite In Home Care</h4>
+          <p class="small text-secondary mb-0">
+            Being a family caregiver is a rewarding but demanding role. In order to care properly for your loved one, take time to recharge with our respite team.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="service-num-card h-100">
+          <div class="num-badge">05</div>
+          <h4 class="fw-bold font-serif mb-2">Dementia Care</h4>
+          <p class="small text-secondary mb-0">
+            Senior Buddies offers peace of mind to families dealing with dementia. We offer support that emphasizes patience, familiarity, and structured routines.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="service-num-card h-100">
+          <div class="num-badge">06</div>
+          <h4 class="fw-bold font-serif mb-2">Parkinson's & Stroke Care</h4>
+          <p class="small text-secondary mb-0">
+            When illness hinders an individual's mobility, our trained caregivers provide physical stability, speech encouragement, and daily task assistance.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 PORTAL ROLES SHOWCASE (From PDF Blueprint) -->
+  <section class="card-3d p-4 p-md-5 mb-5 bg-white">
+    <div class="text-center mb-5">
+      <span class="pill-tag pill-lime mb-2">Blueprint Overview</span>
+      <h2 class="font-serif display-6 fw-bold">Who Uses The Senior Independence Portal?</h2>
+      <p class="text-secondary mx-auto" style="max-width: 600px;">
+        Designed specifically for seniors with large buttons, high contrast, and automated safety timers that connect family, doctors, and emergency dispatch.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Senior Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background: var(--lime-50);">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-success text-white p-2 rounded-circle"><i class="bi bi-heart-pulse-fill"></i></div>
+            <h4 class="fw-bold font-serif mb-0">Senior</h4>
+          </div>
+          <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4">
+            <li><i class="bi bi-check2-circle text-success me-1"></i> Marks medicines as taken</li>
+            <li><i class="bi bi-check2-circle text-success me-1"></i> Presses "I am OK" every morning</li>
+            <li><i class="bi bi-check2-circle text-success me-1"></i> Manages tasks and visits</li>
+            <li><i class="bi bi-check2-circle text-success me-1"></i> Big tactile 3D SOS button</li>
+            <li><i class="bi bi-check2-circle text-success me-1"></i> Approves doctor & family access</li>
+          </ul>
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-success rounded-pill fw-bold mt-auto">Sign In as Senior</a>
+        </div>
+      </div>
+
+      <!-- Family Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background: #f0fdf4;">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-primary text-white p-2 rounded-circle"><i class="bi bi-house-door-fill"></i></div>
+            <h4 class="fw-bold font-serif mb-0">Family</h4>
+          </div>
+          <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4">
+            <li><i class="bi bi-check2-circle text-primary me-1"></i> Real-time check-in status</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i> Missed medicine alert in 30m</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i> SMS & in-app notifications</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i> "I am responding" button</li>
+            <li><i class="bi bi-check2-circle text-primary me-1"></i> Adherence tracking</li>
+          </ul>
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-primary rounded-pill fw-bold mt-auto">Sign In as Family</a>
+        </div>
+      </div>
+
+      <!-- Doctor Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background: #eff6ff;">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-info text-white p-2 rounded-circle"><i class="bi bi-prescription2"></i></div>
+            <h4 class="fw-bold font-serif mb-0">Doctor</h4>
+          </div>
+          <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4">
+            <li><i class="bi bi-check2-circle text-info me-1"></i> View assigned patient list</li>
+            <li><i class="bi bi-check2-circle text-info me-1"></i> Prescribe & edit instructions</li>
+            <li><i class="bi bi-check2-circle text-info me-1"></i> Review adherence rates</li>
+            <li><i class="bi bi-check2-circle text-info me-1"></i> Clinical progress notes</li>
+            <li><i class="bi bi-check2-circle text-info me-1"></i> Manage medical checkups</li>
+          </ul>
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-info rounded-pill fw-bold mt-auto">Sign In as Doctor</a>
+        </div>
+      </div>
+
+      <!-- Admin Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card h-100 border-0 rounded-4 p-4 shadow-sm" style="background: #f8fafc;">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="bg-dark text-white p-2 rounded-circle"><i class="bi bi-shield-lock-fill"></i></div>
+            <h4 class="fw-bold font-serif mb-0">Admin</h4>
+          </div>
+          <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-4">
+            <li><i class="bi bi-check2-circle text-dark me-1"></i> Account lifecycle management</li>
+            <li><i class="bi bi-check2-circle text-dark me-1"></i> Overall system statistics</li>
+            <li><i class="bi bi-check2-circle text-dark me-1"></i> Emergency response logs</li>
+            <li><i class="bi bi-shield-slash text-danger me-1"></i> <strong>Cannot view private medical records</strong> (strict privacy)</li>
+            <li><i class="bi bi-check2-circle text-dark me-1"></i> Security audit trail</li>
+          </ul>
+          <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-dark rounded-pill fw-bold mt-auto">Sign In as Admin</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
