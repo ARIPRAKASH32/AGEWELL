@@ -10,6 +10,11 @@ from scheduler import start_scheduler, notify_user, dispatch_sms
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'agewell-senior-portal-secure-secret-key-2026')
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB request limit
+
+def normalize_email(email_str):
+    """Trims whitespace and lowercases email address for canonical lookup."""
+    return (email_str or '').strip().lower()
 
 # Initialize DB and start APScheduler background worker
 init_db()
