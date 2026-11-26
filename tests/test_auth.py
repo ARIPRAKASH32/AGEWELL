@@ -67,3 +67,10 @@ def test_logout_clears_session(client):
     response = client.get('/logout', follow_redirects=True)
     assert response.status_code == 200
     assert b'Sign In' in response.data or b'Welcome Back' in response.data
+
+def test_custom_404_page(client):
+    """Test that visiting non-existent URL renders custom 404 page."""
+    response = client.get('/nonexistent-test-endpoint-404')
+    assert response.status_code == 404
+    assert b"We Couldn't Find That Page" in response.data
+    assert b'Return to Safe Dashboard' in response.data

@@ -1266,5 +1266,14 @@ def api_chat_poll(contact_id):
 
     return jsonify({'success': True, 'messages': msgs})
 
+# ----------------- Custom Error Handlers -----------------
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('errors/500.html'), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
