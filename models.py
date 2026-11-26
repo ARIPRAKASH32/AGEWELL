@@ -179,7 +179,8 @@ def init_db():
         checkin_time TEXT,
         status TEXT NOT NULL CHECK(status IN ('ok', 'missed', 'late', 'pending')),
         note TEXT,
-        FOREIGN KEY (senior_id) REFERENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (senior_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(senior_id, checkin_date)
     )
     ''')
 
