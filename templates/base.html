@@ -18,6 +18,11 @@
 </head>
 <body>
 
+  <!-- Accessible Skip to Content Link for Senior & Keyboard Navigation -->
+  <a href="#main-content" class="visually-hidden-focusable p-3 bg-white text-dark fw-bold position-absolute start-0 top-0 shadow border border-success" style="z-index: 99999;">
+    Skip to main content
+  </a>
+
   <!-- Top Emergency Broadcast Bar if SOS is active -->
   {% if active_sos_global %}
   <div class="bg-danger text-white py-2 px-3 text-center fw-bold shadow-lg d-flex align-items-center justify-content-center gap-3 animate-pulse" style="font-size: 1.15rem; z-index: 10001; position: relative;">
@@ -162,7 +167,7 @@
   </div>
 
   <!-- Main Content Area -->
-  <main class="py-4">
+  <main id="main-content" role="main" class="py-4">
     {% block content %}{% endblock %}
   </main>
 
