@@ -345,15 +345,18 @@ h1, h2, h3, .font-serif {
   position: relative;
 }
 
-/* App Navbar */
+/* App Navbar with Ultra-Smooth Dark Glassmorphism */
 .app-navbar {
-  background: rgba(13, 44, 34, 0.96);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(139, 224, 52, 0.2);
-  padding: 1rem 0;
+  background: rgba(13, 44, 34, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(139, 224, 52, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(8, 29, 22, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 0.95rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .brand-logo {
