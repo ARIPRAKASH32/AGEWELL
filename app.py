@@ -1041,5 +1041,230 @@ def notifications_view():
     conn.close()
     return render_template('notifications.html', notifications=notifs)
 
+# ----------------- Chat / Messaging System -----------------
+def get_user_chat_contacts(user_id, role):
+    """Returns authorized contacts for chat based on user role and relationships."""
+    conn = get_db()
+    cursor = conn.cursor()
+    contacts = []
+
+    if role == 'senior':
+        # Senior can message approved Family Members
+        cursor.execute("""
+            SELECT u.id, u.name, u.role, u.phone, fl.relation as subtitle
+            FROM family_links fl
+            JOIN users u ON fl.family_user_id = u.id
+            WHERE fl.senior_id = ? AND fl.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            contacts.append(dict(r))
+
+        # Senior can message assigned Doctors
+        cursor.execute("""
+            SELECT u.id, u.name, u.role, u.phone, da.specialization as subtitle
+            FROM doctor_assignments da
+            JOIN users u ON da.doctor_user_id = u.id
+            WHERE da.senior_id = ? AND da.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            contacts.append(dict(r))
+
+    elif role == 'family':
+        # Family can message approved Seniors
+        cursor.execute("""
+            SELECT u.id, u.name, u.role, u.phone, fl.relation as subtitle
+            FROM family_links fl
+            JOIN users u ON fl.senior_id = u.id
+            WHERE fl.family_user_id = ? AND fl.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            contacts.append(dict(r))
+
+        # Family can also message assigned Doctors for their Seniors
+        cursor.execute("""
+            SELECT DISTINCT u.id, u.name, u.role, u.phone, da.specialization as subtitle
+            FROM family_links fl
+            JOIN doctor_assignments da ON fl.senior_id = da.senior_id
+            JOIN users u ON da.doctor_user_id = u.id
+            WHERE fl.family_user_id = ? AND fl.is_approved = 1 AND da.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            if not any(c['id'] == r['id'] for c in contacts):
+                contacts.append(dict(r))
+
+    elif role == 'doctor':
+        # Doctor can message assigned Seniors
+        cursor.execute("""
+            SELECT u.id, u.name, u.role, u.phone, da.specialization as subtitle
+            FROM doctor_assignments da
+            JOIN users u ON da.senior_id = u.id
+            WHERE da.doctor_user_id = ? AND da.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            contacts.append(dict(r))
+
+        # Doctor can also message approved Family Members of their Seniors
+        cursor.execute("""
+            SELECT DISTINCT u.id, u.name, u.role, u.phone, fl.relation as subtitle
+            FROM doctor_assignments da
+            JOIN family_links fl ON da.senior_id = fl.senior_id
+            JOIN users u ON fl.family_user_id = u.id
+            WHERE da.doctor_user_id = ? AND da.is_approved = 1 AND fl.is_approved = 1
+            ORDER BY u.name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            if not any(c['id'] == r['id'] for c in contacts):
+                contacts.append(dict(r))
+
+    elif role == 'admin':
+        # Admin can view/message active users for support
+        cursor.execute("""
+            SELECT id, name, role, phone, role as subtitle
+            FROM users
+            WHERE id != ?
+            ORDER BY name ASC
+        """, (user_id,))
+        for r in cursor.fetchall():
+            contacts.append(dict(r))
+
+    # Add last message and unread count for each contact
+    for c in contacts:
+        c_id = c['id']
+        cursor.execute("""
+            SELECT message, sent_at, sender_id
+            FROM messages
+            WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
+            ORDER BY sent_at DESC LIMIT 1
+        """, (user_id, c_id, c_id, user_id))
+        last_m = cursor.fetchone()
+        if last_m:
+            c['last_message'] = last_m['message']
+            c['last_message_time'] = last_m['sent_at']
+        else:
+            c['last_message'] = 'No messages yet'
+            c['last_message_time'] = ''
+
+        cursor.execute("""
+            SELECT COUNT(*) FROM messages
+            WHERE sender_id = ? AND receiver_id = ? AND is_read = 0
+        """, (c_id, user_id))
+        c['unread_count'] = cursor.fetchone()[0]
+
+    conn.close()
+    return contacts
+
+@app.route('/chat')
+@app.route('/chat/<int:contact_id>')
+@login_required
+def chat_view(contact_id=None):
+    user_id = session['user_id']
+    role = session['role']
+    contacts = get_user_chat_contacts(user_id, role)
+
+    active_contact = None
+    messages = []
+
+    if contacts:
+        if contact_id:
+            active_contact = next((c for c in contacts if c['id'] == contact_id), None)
+        if not active_contact:
+            active_contact = contacts[0]
+
+        # Fetch messages between user and active_contact
+        conn = get_db()
+        cursor = conn.cursor()
+        c_id = active_contact['id']
+
+        # Mark messages from active_contact as read
+        cursor.execute("""
+            UPDATE messages SET is_read = 1
+            WHERE sender_id = ? AND receiver_id = ?
+        """, (c_id, user_id))
+        conn.commit()
+
+        cursor.execute("""
+            SELECT m.*, u.name as sender_name
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            WHERE (m.sender_id = ? AND m.receiver_id = ?)
+               OR (m.sender_id = ? AND m.receiver_id = ?)
+            ORDER BY m.sent_at ASC
+        """, (user_id, c_id, c_id, user_id))
+        messages = cursor.fetchall()
+        conn.close()
+
+    return render_template(
+        'chat.html',
+        contacts=contacts,
+        active_contact=active_contact,
+        messages=messages
+    )
+
+@app.route('/api/chat/send', methods=['POST'])
+@login_required
+def api_chat_send():
+    data = request.get_json() or {}
+    receiver_id = data.get('receiver_id')
+    message_text = (data.get('message') or '').strip()
+
+    if not receiver_id or not message_text:
+        return jsonify({'success': False, 'error': 'Missing recipient or message'}), 400
+
+    user_id = session['user_id']
+    role = session['role']
+
+    # Security check: verify receiver is an authorized contact
+    contacts = get_user_chat_contacts(user_id, role)
+    allowed_ids = [c['id'] for c in contacts]
+    if int(receiver_id) not in allowed_ids:
+        return jsonify({'success': False, 'error': 'Unauthorized conversation'}), 403
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO messages (sender_id, receiver_id, message, is_read, sent_at)
+        VALUES (?, ?, ?, 0, datetime('now', 'localtime'))
+    """, (user_id, receiver_id, message_text))
+    new_msg_id = cursor.lastrowid
+    conn.commit()
+
+    cursor.execute("SELECT * FROM messages WHERE id = ?", (new_msg_id,))
+    msg = dict(cursor.fetchone())
+    conn.close()
+
+    return jsonify({'success': True, 'message': msg})
+
+@app.route('/api/chat/poll/<int:contact_id>')
+@login_required
+def api_chat_poll(contact_id):
+    user_id = session['user_id']
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Mark incoming as read
+    cursor.execute("""
+        UPDATE messages SET is_read = 1
+        WHERE sender_id = ? AND receiver_id = ?
+    """, (contact_id, user_id))
+    conn.commit()
+
+    cursor.execute("""
+        SELECT m.*, u.name as sender_name
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE (m.sender_id = ? AND m.receiver_id = ?)
+           OR (m.sender_id = ? AND m.receiver_id = ?)
+        ORDER BY m.sent_at ASC
+    """, (user_id, contact_id, contact_id, user_id))
+    msgs = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+
+    return jsonify({'success': True, 'messages': msgs})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
