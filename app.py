@@ -1085,6 +1085,35 @@ def admin_audit_logs():
     conn.close()
     return render_template('admin/audit_logs.html', logs=logs)
 
+@app.route('/admin/export/audit-logs')
+@role_required('admin')
+def export_audit_logs_csv():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT al.created_at, u.name as actor_name, al.action, al.target_type, al.target_id, al.details, al.ip_address
+        FROM audit_logs al
+        LEFT JOIN users u ON al.actor_user_id = u.id
+        ORDER BY al.created_at DESC LIMIT 500
+    """)
+    logs = cursor.fetchall()
+    conn.close()
+
+    import csv
+    import io
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Timestamp', 'Actor Name', 'Action', 'Target Type', 'Target ID', 'Details', 'IP Address'])
+    for r in logs:
+        writer.writerow([r['created_at'], r['actor_name'] or 'System', r['action'], r['target_type'], r['target_id'] or '', r['details'] or '', r['ip_address'] or ''])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=agewell_audit_trail_export.csv"}
+    )
+
 # ----------------- Notifications API -----------------
 @app.route('/api/notifications/unread-count')
 def api_unread_count():
