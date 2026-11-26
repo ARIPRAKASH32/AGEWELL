@@ -39,26 +39,26 @@
         <span class="portal-tag d-none d-sm-inline">Portal</span>
       </a>
 
-      <!-- Center: Role-based Navigation Links -->
+      <!-- Center: Role-based Navigation Links (Dynamically highlighted by current page) -->
       <div class="nav-center-links d-none d-lg-flex align-items-center gap-1">
         {% if current_role == 'senior' %}
-          <a href="{{ url_for('senior_dashboard') }}" class="nav-action-link active"><i class="bi bi-grid-fill me-1"></i> Home</a>
-          <a href="{{ url_for('senior_medicines') }}" class="nav-action-link"><i class="bi bi-capsule me-1"></i> Medicines</a>
-          <a href="{{ url_for('senior_appointments') }}" class="nav-action-link"><i class="bi bi-calendar2-check me-1"></i> Visits</a>
-          <a href="{{ url_for('senior_approvals') }}" class="nav-action-link"><i class="bi bi-shield-lock me-1"></i> Permissions</a>
-          <a href="{{ url_for('senior_profile') }}" class="nav-action-link"><i class="bi bi-person-circle me-1"></i> Profile</a>
+          <a href="{{ url_for('senior_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_dashboard' else '' }}"><i class="bi bi-grid-fill me-1"></i> Home</a>
+          <a href="{{ url_for('senior_medicines') }}" class="nav-action-link {{ 'active' if request.endpoint in ('senior_medicines', 'senior_medicine_action') else '' }}"><i class="bi bi-capsule me-1"></i> Medicines</a>
+          <a href="{{ url_for('senior_appointments') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_appointments' else '' }}"><i class="bi bi-calendar2-check me-1"></i> Visits</a>
+          <a href="{{ url_for('senior_approvals') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_approvals' else '' }}"><i class="bi bi-shield-lock me-1"></i> Permissions</a>
+          <a href="{{ url_for('senior_profile') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_profile' else '' }}"><i class="bi bi-person-circle me-1"></i> Profile</a>
         {% elif current_role == 'family' %}
-          <a href="{{ url_for('family_dashboard') }}" class="nav-action-link active"><i class="bi bi-house-heart-fill me-1"></i> My Seniors</a>
-          <a href="{{ url_for('family_alerts') }}" class="nav-action-link"><i class="bi bi-bell-fill me-1"></i> Alert Feed</a>
+          <a href="{{ url_for('family_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint in ('family_dashboard', 'family_senior_status') else '' }}"><i class="bi bi-house-heart-fill me-1"></i> My Seniors</a>
+          <a href="{{ url_for('family_alerts') }}" class="nav-action-link {{ 'active' if request.endpoint == 'family_alerts' else '' }}"><i class="bi bi-bell-fill me-1"></i> Alert Feed</a>
         {% elif current_role == 'doctor' %}
-          <a href="{{ url_for('doctor_dashboard') }}" class="nav-action-link active"><i class="bi bi-speedometer2 me-1"></i> Doctor Hub</a>
-          <a href="{{ url_for('doctor_patients') }}" class="nav-action-link"><i class="bi bi-people-fill me-1"></i> Patients</a>
-          <a href="{{ url_for('doctor_appointments') }}" class="nav-action-link"><i class="bi bi-calendar-event me-1"></i> Visits</a>
+          <a href="{{ url_for('doctor_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'doctor_dashboard' else '' }}"><i class="bi bi-speedometer2 me-1"></i> Doctor Hub</a>
+          <a href="{{ url_for('doctor_patients') }}" class="nav-action-link {{ 'active' if request.endpoint in ('doctor_patients', 'doctor_patient_details') else '' }}"><i class="bi bi-people-fill me-1"></i> Patients</a>
+          <a href="{{ url_for('doctor_appointments') }}" class="nav-action-link {{ 'active' if request.endpoint == 'doctor_appointments' else '' }}"><i class="bi bi-calendar-event me-1"></i> Visits</a>
         {% elif current_role == 'admin' %}
-          <a href="{{ url_for('admin_dashboard') }}" class="nav-action-link active"><i class="bi bi-shield-check me-1"></i> Admin</a>
-          <a href="{{ url_for('admin_users') }}" class="nav-action-link"><i class="bi bi-people me-1"></i> Users</a>
-          <a href="{{ url_for('admin_emergencies') }}" class="nav-action-link"><i class="bi bi-lightning-charge me-1"></i> SOS Logs</a>
-          <a href="{{ url_for('admin_audit_logs') }}" class="nav-action-link"><i class="bi bi-file-earmark-medical me-1"></i> Audit</a>
+          <a href="{{ url_for('admin_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_dashboard' else '' }}"><i class="bi bi-shield-check me-1"></i> Admin</a>
+          <a href="{{ url_for('admin_users') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_users' else '' }}"><i class="bi bi-people me-1"></i> Users</a>
+          <a href="{{ url_for('admin_emergencies') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_emergencies' else '' }}"><i class="bi bi-lightning-charge me-1"></i> SOS Logs</a>
+          <a href="{{ url_for('admin_audit_logs') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_audit_logs' else '' }}"><i class="bi bi-file-earmark-medical me-1"></i> Audit</a>
         {% endif %}
       </div>
 
