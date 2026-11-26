@@ -30,53 +30,57 @@
 
   <!-- Header Navigation -->
   <nav class="app-navbar">
-    <div class="container d-flex align-items-center justify-content-between">
-      <!-- Brand Logo -->
-      <a href="{{ url_for('index') }}" class="brand-logo">
+    <div class="container-fluid px-3 px-xl-5 d-flex align-items-center justify-content-between">
+      
+      <!-- Left: Brand Logo -->
+      <a href="{{ url_for('index') }}" class="brand-logo flex-shrink-0">
         <span class="dot"></span>
-        <span>AGEWELL</span>
-        <span class="badge rounded-pill bg-dark text-success border border-success border-opacity-25 px-2 py-1 ms-1 fs-6 d-none d-md-inline">Portal</span>
+        <span class="brand-name">AGEWELL</span>
+        <span class="portal-tag d-none d-sm-inline">Portal</span>
       </a>
 
-      <!-- Quick Nav Links according to Role -->
-      <div class="d-flex align-items-center gap-3">
+      <!-- Center: Role-based Navigation Links -->
+      <div class="nav-center-links d-none d-lg-flex align-items-center gap-1">
         {% if current_role == 'senior' %}
-          <a href="{{ url_for('senior_dashboard') }}" class="nav-link text-white fw-bold px-2"><i class="bi bi-grid-fill text-lime me-1"></i> Home</a>
-          <a href="{{ url_for('senior_medicines') }}" class="nav-link text-white-50 px-2 d-none d-md-inline"><i class="bi bi-capsule me-1"></i> Medicines</a>
-          <a href="{{ url_for('senior_appointments') }}" class="nav-link text-white-50 px-2 d-none d-lg-inline"><i class="bi bi-calendar2-check me-1"></i> Visits</a>
-          <a href="{{ url_for('senior_approvals') }}" class="nav-link text-white-50 px-2 d-none d-lg-inline"><i class="bi bi-shield-lock me-1"></i> Permissions</a>
-          <a href="{{ url_for('senior_profile') }}" class="nav-link text-white-50 px-2"><i class="bi bi-person-circle me-1"></i> Profile</a>
+          <a href="{{ url_for('senior_dashboard') }}" class="nav-action-link active"><i class="bi bi-grid-fill me-1"></i> Home</a>
+          <a href="{{ url_for('senior_medicines') }}" class="nav-action-link"><i class="bi bi-capsule me-1"></i> Medicines</a>
+          <a href="{{ url_for('senior_appointments') }}" class="nav-action-link"><i class="bi bi-calendar2-check me-1"></i> Visits</a>
+          <a href="{{ url_for('senior_approvals') }}" class="nav-action-link"><i class="bi bi-shield-lock me-1"></i> Permissions</a>
+          <a href="{{ url_for('senior_profile') }}" class="nav-action-link"><i class="bi bi-person-circle me-1"></i> Profile</a>
         {% elif current_role == 'family' %}
-          <a href="{{ url_for('family_dashboard') }}" class="nav-link text-white fw-bold px-2"><i class="bi bi-house-heart-fill me-1"></i> My Seniors</a>
-          <a href="{{ url_for('family_alerts') }}" class="nav-link text-white-50 px-2"><i class="bi bi-bell-fill me-1"></i> Alert Feed</a>
+          <a href="{{ url_for('family_dashboard') }}" class="nav-action-link active"><i class="bi bi-house-heart-fill me-1"></i> My Seniors</a>
+          <a href="{{ url_for('family_alerts') }}" class="nav-action-link"><i class="bi bi-bell-fill me-1"></i> Alert Feed</a>
         {% elif current_role == 'doctor' %}
-          <a href="{{ url_for('doctor_dashboard') }}" class="nav-link text-white fw-bold px-2"><i class="bi bi-speedometer2 me-1"></i> Doctor Hub</a>
-          <a href="{{ url_for('doctor_patients') }}" class="nav-link text-white-50 px-2"><i class="bi bi-people-fill me-1"></i> Patients</a>
-          <a href="{{ url_for('doctor_appointments') }}" class="nav-link text-white-50 px-2 d-none d-md-inline"><i class="bi bi-calendar-event me-1"></i> Visits</a>
+          <a href="{{ url_for('doctor_dashboard') }}" class="nav-action-link active"><i class="bi bi-speedometer2 me-1"></i> Doctor Hub</a>
+          <a href="{{ url_for('doctor_patients') }}" class="nav-action-link"><i class="bi bi-people-fill me-1"></i> Patients</a>
+          <a href="{{ url_for('doctor_appointments') }}" class="nav-action-link"><i class="bi bi-calendar-event me-1"></i> Visits</a>
         {% elif current_role == 'admin' %}
-          <a href="{{ url_for('admin_dashboard') }}" class="nav-link text-white fw-bold px-2"><i class="bi bi-shield-check me-1"></i> Admin</a>
-          <a href="{{ url_for('admin_users') }}" class="nav-link text-white-50 px-2"><i class="bi bi-people me-1"></i> Users</a>
-          <a href="{{ url_for('admin_emergencies') }}" class="nav-link text-white-50 px-2 d-none d-md-inline"><i class="bi bi-lightning-charge me-1"></i> SOS Logs</a>
-          <a href="{{ url_for('admin_audit_logs') }}" class="nav-link text-white-50 px-2 d-none d-lg-inline"><i class="bi bi-file-earmark-medical me-1"></i> Audit</a>
+          <a href="{{ url_for('admin_dashboard') }}" class="nav-action-link active"><i class="bi bi-shield-check me-1"></i> Admin</a>
+          <a href="{{ url_for('admin_users') }}" class="nav-action-link"><i class="bi bi-people me-1"></i> Users</a>
+          <a href="{{ url_for('admin_emergencies') }}" class="nav-action-link"><i class="bi bi-lightning-charge me-1"></i> SOS Logs</a>
+          <a href="{{ url_for('admin_audit_logs') }}" class="nav-action-link"><i class="bi bi-file-earmark-medical me-1"></i> Audit</a>
         {% endif %}
+      </div>
 
-        <!-- Emergency 112 Direct Call Button (Always Present per Blueprint) -->
-        <a href="tel:112" class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1 shadow-sm">
+      <!-- Right: Utility Controls & User Profile -->
+      <div class="nav-right-actions d-flex align-items-center gap-2">
+        <!-- Emergency 112 Direct Button -->
+        <a href="tel:112" class="sos-call-pill" title="Emergency Direct Call 112">
           <i class="bi bi-telephone-fill"></i>
           <span>112</span>
         </a>
 
         <!-- Phone contact pill matching Senior Buddies image -->
-        <a href="tel:2105550848" class="phone-pill d-none d-xl-inline-flex">
-          <i class="bi bi-telephone-outbound-fill text-success"></i>
+        <a href="tel:2105550848" class="phone-pill d-none d-xxl-inline-flex">
+          <i class="bi bi-telephone-outbound-fill text-lime"></i>
           <span>(210) 555-0848</span>
         </a>
 
         <!-- Notifications Bell -->
         {% if current_user_id %}
-        <a href="{{ url_for('notifications_view') }}" class="position-relative text-white p-2" title="Notifications">
-          <i class="bi bi-bell-fill fs-5"></i>
-          <span id="unread-notif-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ 'd-none' if unread_notif_count == 0 else '' }}">
+        <a href="{{ url_for('notifications_view') }}" class="nav-icon-btn position-relative" title="Notifications">
+          <i class="bi bi-bell-fill"></i>
+          <span id="unread-notif-count" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger {{ 'd-none' if unread_notif_count == 0 else '' }}">
             {{ unread_notif_count }}
           </span>
         </a>
@@ -84,8 +88,9 @@
 
         <!-- Theme Selector Dropdown -->
         <div class="dropdown">
-          <button class="btn btn-sm btn-outline-info rounded-pill px-2 py-1 text-white dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Theme & Colors">
-            <i class="bi bi-palette-fill text-info me-1"></i> Theme
+          <button class="nav-theme-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Theme & Colors">
+            <i class="bi bi-palette-fill text-info"></i>
+            <span class="d-none d-sm-inline">Theme</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2" style="min-width: 190px;">
             <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('oceanic')"><span class="badge rounded-circle p-2" style="background: #0ea5e9;"> </span> Oceanic Cyan (Modern)</button></li>
@@ -96,17 +101,19 @@
         </div>
 
         <!-- Accessibility Big Text Switch -->
-        <button id="toggle-senior-size" class="btn btn-sm btn-outline-light rounded-pill px-2 py-1" title="Toggle Big Text for Seniors">
-          <i class="bi bi-fonts fs-6"></i> A+
+        <button id="toggle-senior-size" class="nav-font-btn" title="Toggle Big Text for Seniors">
+          <span class="t-letter">T</span>
+          <span class="a-letter">A+</span>
         </button>
 
         <!-- User profile / Auth -->
         {% if current_user %}
           <div class="dropdown">
-            <button class="btn btn-sm btn-light dropdown-toggle rounded-pill px-3 py-1 fw-bold" type="button" data-bs-toggle="dropdown">
-              <i class="bi bi-person-fill text-success me-1"></i> {{ current_user.split(' ')[0] }}
+            <button class="nav-user-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <span class="user-avatar-circle"><i class="bi bi-person-fill"></i></span>
+              <span class="user-name-text">{{ current_user.split(' ')[0] }}</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4">
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 py-2">
               <li class="px-3 py-2 border-bottom">
                 <div class="fw-bold">{{ current_user }}</div>
                 <div class="small text-muted text-uppercase">{{ current_role }}</div>
@@ -115,7 +122,7 @@
             </ul>
           </div>
         {% else %}
-          <a href="{{ url_for('login') }}" class="btn-3d btn-3d-lime py-2 px-4" style="font-size: 0.95rem;">
+          <a href="{{ url_for('login') }}" class="btn-3d btn-3d-lime py-2 px-3" style="font-size: 0.92rem;">
             Sign In <i class="bi bi-arrow-right"></i>
           </a>
         {% endif %}
