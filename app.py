@@ -944,6 +944,37 @@ def doctor_appointments():
 
     return render_template('doctor/appointments.html', appointments=appointments, patients=patients)
 
+@app.route('/doctor/export/appointments')
+@role_required('doctor', 'admin')
+def export_appointments_csv():
+    d_id = session['user_id']
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT a.appointment_date, a.appointment_time, u.name as patient_name, a.title, a.status, a.notes
+        FROM appointments a 
+        JOIN users u ON a.senior_id = u.id 
+        WHERE a.doctor_user_id = ? 
+        ORDER BY a.appointment_date DESC, a.appointment_time DESC
+    """, (d_id,))
+    appts = cursor.fetchall()
+    conn.close()
+
+    import csv
+    import io
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Date', 'Time', 'Patient Name', 'Title / Reason', 'Status', 'Clinical Notes'])
+    for r in appts:
+        writer.writerow([r['appointment_date'], r['appointment_time'], r['patient_name'], r['title'], r['status'], r['notes'] or ''])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment;filename=agewell_doctor_appointments_{d_id}.csv"}
+    )
+
 # ----------------- Admin Routes -----------------
 # PDF Requirement: "Admin: Manages accounts and sees statistics. Cannot see private medical details"
 @app.route('/admin/dashboard')

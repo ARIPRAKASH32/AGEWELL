@@ -8,3 +8,12 @@ def test_export_medications_csv(client):
     assert response.status_code == 200
     assert response.headers.get('Content-Type') == 'text/csv; charset=utf-8'
     assert b'Date,Scheduled Time,Medicine Name,Dosage,Adherence Status' in response.data
+
+def test_export_appointments_csv(client):
+    """Test exporting doctor appointments as CSV."""
+    # Login as doctor
+    client.post('/login', data={'email': 'doctor@agewell.com', 'password': 'password123'})
+    response = client.get('/doctor/export/appointments')
+    assert response.status_code == 200
+    assert response.headers.get('Content-Type') == 'text/csv; charset=utf-8'
+    assert b'Date,Time,Patient Name,Title / Reason,Status' in response.data
