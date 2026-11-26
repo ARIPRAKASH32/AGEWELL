@@ -189,13 +189,15 @@ function initTheme() {
 }
 
 window.setAppTheme = function(themeName, save = true) {
-  if (themeName === 'oceanic') {
-    document.documentElement.removeAttribute('data-theme');
+  if (!themeName || themeName === 'forest') {
+    document.documentElement.setAttribute('data-theme', 'forest');
   } else {
     document.documentElement.setAttribute('data-theme', themeName);
   }
   if (save) {
     localStorage.setItem('agewell_theme', themeName);
-    playTone('success');
+    if (typeof playTone === 'function') {
+      playTone('success');
+    }
   }
 };
