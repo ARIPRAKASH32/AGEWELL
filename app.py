@@ -2,7 +2,7 @@ import os
 import sqlite3
 from datetime import datetime, date, timedelta
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import get_db, init_db, log_audit
@@ -355,6 +355,37 @@ def senior_medicine_action():
     msg = f"Marked medicine as {action}!"
     flash(msg, "success" if action == 'taken' else "info")
     return redirect(request.referrer or url_for('senior_dashboard'))
+
+@app.route('/senior/export/medications')
+@role_required('senior', 'doctor', 'family')
+def export_medications_csv():
+    senior_id = session['user_id'] if session['role'] == 'senior' else request.args.get('senior_id', session['user_id'])
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT ml.scheduled_date, ml.scheduled_time, m.name as medicine_name, m.dose, ml.status, ml.logged_at, ml.note
+        FROM medicine_logs ml
+        JOIN medicines m ON ml.medicine_id = m.id
+        WHERE ml.senior_id = ?
+        ORDER BY ml.scheduled_date DESC, ml.scheduled_time DESC
+    """, (senior_id,))
+    logs = cursor.fetchall()
+    conn.close()
+
+    import csv
+    import io
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Date', 'Scheduled Time', 'Medicine Name', 'Dosage', 'Adherence Status', 'Logged At', 'Notes'])
+    for r in logs:
+        writer.writerow([r['scheduled_date'], r['scheduled_time'], r['medicine_name'], r['dose'], r['status'], r['logged_at'] or '', r['note'] or ''])
+
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment;filename=agewell_medication_logs_senior_{senior_id}.csv"}
+    )
 
 @app.route('/senior/appointments')
 @role_required('senior')
