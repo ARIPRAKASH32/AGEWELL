@@ -201,3 +201,13 @@ window.setAppTheme = function(themeName, save = true) {
     }
   }
 };
+
+// Register PWA Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/sw.js').catch((err) => {
+      console.debug('ServiceWorker registration skipped:', err);
+    });
+  });
+}
+
