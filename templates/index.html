@@ -65,30 +65,34 @@
         </div>
       </div>
 
-      <!-- Care Visual Hero Card -->
+      <!-- Care Visual Hero Card with Warm Family Love & Care Image -->
       <div class="col-lg-6">
-        <div class="p-4 p-md-5 rounded-4 h-100 d-flex flex-column justify-content-center text-center position-relative overflow-hidden" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(139, 224, 52, 0.25);">
-          <div class="mb-4">
-            <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow-lg" style="width: 90px; height: 90px; background: rgba(123, 206, 41, 0.18); border: 2px solid rgba(139, 224, 52, 0.5);">
-              <i class="bi bi-shield-heart-fill text-lime display-4"></i>
-            </span>
-            <h2 class="font-serif fw-bold text-white fs-2 mb-2">Autonomous Independence</h2>
-            <p class="text-white-50 fs-6 mb-0" style="max-width: 440px; margin: 0 auto;">
-              Continuous safety surveillance, timely reminders, and instant emergency connection tailored for seniors and families.
-            </p>
-          </div>
-
-          <div class="row g-3 text-start mt-2">
-            <div class="col-sm-6">
-              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
-                <div class="text-lime fw-bold small mb-1"><i class="bi bi-clock-history me-1"></i> 30-Min Grace Period</div>
-                <div class="text-white-50 small">Automatic reminders for medications & daily check-ins.</div>
-              </div>
+        <div class="rounded-4 h-100 position-relative overflow-hidden shadow-lg border border-success border-opacity-25" style="min-height: 440px;">
+          <img src="{{ url_for('static', filename='images/family_love.jpg') }}" alt="Loving Care for Seniors" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.9) contrast(1.05);">
+          
+          <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-between p-4 p-md-5" style="background: linear-gradient(180deg, rgba(8, 29, 22, 0.4) 0%, rgba(8, 29, 22, 0.88) 100%);">
+            <div>
+              <span class="badge rounded-pill bg-success text-white border border-light border-opacity-25 px-3 py-2 fw-bold mb-3">
+                <i class="bi bi-heart-fill text-danger me-1"></i> Compassionate In-Home Support
+              </span>
+              <h2 class="font-serif fw-bold text-white display-6 mb-2">Surrounded by Love & Dignity</h2>
+              <p class="text-white-50 fs-6 mb-0" style="max-width: 440px;">
+                Personalized daily care, medical adherence oversight, and round-the-clock safety connection for your family.
+              </p>
             </div>
-            <div class="col-sm-6">
-              <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
-                <div class="text-lime fw-bold small mb-1"><i class="bi bi-shield-lock me-1"></i> Approval Privacy</div>
-                <div class="text-white-50 small">Seniors explicitly grant access to family and doctors.</div>
+
+            <div class="row g-3 text-start mt-3">
+              <div class="col-sm-6">
+                <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                  <div class="text-lime fw-bold small mb-1"><i class="bi bi-heart-pulse-fill me-1"></i> Daily Well-Being</div>
+                  <div class="text-white small">Instant "I am OK" morning check-in notification for family.</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="p-3 rounded-4" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                  <div class="text-lime fw-bold small mb-1"><i class="bi bi-shield-check me-1"></i> Certified Doctors</div>
+                  <div class="text-white small">Direct communication & medication tracking with specialists.</div>
+                </div>
               </div>
             </div>
           </div>
