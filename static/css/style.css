@@ -654,6 +654,55 @@ h1, h2, h3, .font-serif {
   background-color: #ffffff !important;
 }
 
+/* Futuristic Page Entrance & Scroll-Triggered 3D Reveals */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: pageFadeIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.reveal-3d {
+  opacity: 0;
+  transform: translateY(24px) scale(0.985);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-3d.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Dark Glassmorphism Specular Edge Highlight */
+.card-3d-forest {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 24px 48px -12px rgba(8, 29, 22, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  main,
+  .reveal-3d,
+  .card-3d,
+  .btn-3d,
+  .demo-account-btn {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
 @media (max-width: 768px) {
   .floating-sos-btn {
     width: 70px;

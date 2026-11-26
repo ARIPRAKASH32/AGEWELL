@@ -224,7 +224,36 @@ function initInteractive3DCards() {
   });
 }
 
+// 10. Scroll-Triggered 3D Reveals (GPU-Accelerated)
+function initScrollReveals() {
+  const targets = document.querySelectorAll('.card-3d, .service-num-card');
+  if (!targets.length || !('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+  );
+
+  targets.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      el.classList.add('is-visible');
+    } else {
+      el.classList.add('reveal-3d');
+      observer.observe(el);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initInteractive3DCards();
+  initScrollReveals();
 });
