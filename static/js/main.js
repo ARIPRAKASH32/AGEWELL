@@ -211,3 +211,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// Periodic session heartbeat (every 5 minutes) to keep bedside tablet sessions alive
+setInterval(async () => {
+  try {
+    await fetch('/api/session/heartbeat');
+  } catch (err) {
+    // Ignore network interruptions
+  }
+}, 300000);
+
+

@@ -74,3 +74,17 @@ def test_custom_404_page(client):
     assert response.status_code == 404
     assert b"We Couldn't Find That Page" in response.data
     assert b'Return to Safe Dashboard' in response.data
+
+def test_session_heartbeat_api(client):
+    """Test session heartbeat returns authenticated state."""
+    # Unauthenticated
+    res1 = client.get('/api/session/heartbeat')
+    assert res1.status_code == 200
+    assert res1.get_json()['authenticated'] is False
+
+    # Authenticated
+    client.post('/login', data={'email': 'senior@agewell.com', 'password': 'password123'})
+    res2 = client.get('/api/session/heartbeat')
+    assert res2.status_code == 200
+    assert res2.get_json()['authenticated'] is True
+    assert res2.get_json()['role'] == 'senior'
