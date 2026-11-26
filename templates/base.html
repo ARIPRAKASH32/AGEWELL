@@ -22,9 +22,11 @@
     <a href="{{ url_for('senior_sos', senior_id=active_sos_global['senior_id']) }}" class="btn btn-sm btn-light fw-bold text-danger px-3 rounded-pill">
       View Emergency Live <i class="bi bi-arrow-right"></i>
     </a>
+    {% if current_role == 'senior' %}
     <a href="tel:112" class="btn btn-sm btn-dark fw-bold px-3 rounded-pill">
       <i class="bi bi-telephone-fill text-danger me-1"></i> Call 112
     </a>
+    {% endif %}
   </div>
   {% endif %}
 
@@ -32,11 +34,10 @@
   <nav class="app-navbar">
     <div class="container-fluid px-3 px-xl-5 d-flex align-items-center justify-content-between">
       
-      <!-- Left: Brand Logo -->
-      <a href="{{ url_for('index') }}" class="brand-logo flex-shrink-0">
-        <span class="dot"></span>
+      <!-- Left: Brand Logo with Circular AW Emblem (Clean, No Portal Tag) -->
+      <a href="{{ url_for('index') }}" class="brand-logo flex-shrink-0" title="AGEWELL Senior Independence">
+        <span class="brand-aw-emblem">AW</span>
         <span class="brand-name">AGEWELL</span>
-        <span class="portal-tag d-none d-sm-inline">Portal</span>
       </a>
 
       <!-- Center: Role-based Navigation Links (Dynamically highlighted by current page) -->
@@ -45,18 +46,22 @@
           <a href="{{ url_for('senior_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_dashboard' else '' }}"><i class="bi bi-grid-fill me-1"></i> Home</a>
           <a href="{{ url_for('senior_medicines') }}" class="nav-action-link {{ 'active' if request.endpoint in ('senior_medicines', 'senior_medicine_action') else '' }}"><i class="bi bi-capsule me-1"></i> Medicines</a>
           <a href="{{ url_for('senior_appointments') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_appointments' else '' }}"><i class="bi bi-calendar2-check me-1"></i> Visits</a>
+          <a href="{{ url_for('chat_view') }}" class="nav-action-link {{ 'active' if request.endpoint == 'chat_view' else '' }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
           <a href="{{ url_for('senior_approvals') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_approvals' else '' }}"><i class="bi bi-shield-lock me-1"></i> Permissions</a>
           <a href="{{ url_for('senior_profile') }}" class="nav-action-link {{ 'active' if request.endpoint == 'senior_profile' else '' }}"><i class="bi bi-person-circle me-1"></i> Profile</a>
         {% elif current_role == 'family' %}
           <a href="{{ url_for('family_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint in ('family_dashboard', 'family_senior_status') else '' }}"><i class="bi bi-house-heart-fill me-1"></i> My Seniors</a>
           <a href="{{ url_for('family_alerts') }}" class="nav-action-link {{ 'active' if request.endpoint == 'family_alerts' else '' }}"><i class="bi bi-bell-fill me-1"></i> Alert Feed</a>
+          <a href="{{ url_for('chat_view') }}" class="nav-action-link {{ 'active' if request.endpoint == 'chat_view' else '' }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
         {% elif current_role == 'doctor' %}
           <a href="{{ url_for('doctor_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'doctor_dashboard' else '' }}"><i class="bi bi-speedometer2 me-1"></i> Doctor Hub</a>
           <a href="{{ url_for('doctor_patients') }}" class="nav-action-link {{ 'active' if request.endpoint in ('doctor_patients', 'doctor_patient_details') else '' }}"><i class="bi bi-people-fill me-1"></i> Patients</a>
           <a href="{{ url_for('doctor_appointments') }}" class="nav-action-link {{ 'active' if request.endpoint == 'doctor_appointments' else '' }}"><i class="bi bi-calendar-event me-1"></i> Visits</a>
+          <a href="{{ url_for('chat_view') }}" class="nav-action-link {{ 'active' if request.endpoint == 'chat_view' else '' }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
         {% elif current_role == 'admin' %}
           <a href="{{ url_for('admin_dashboard') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_dashboard' else '' }}"><i class="bi bi-shield-check me-1"></i> Admin</a>
           <a href="{{ url_for('admin_users') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_users' else '' }}"><i class="bi bi-people me-1"></i> Users</a>
+          <a href="{{ url_for('chat_view') }}" class="nav-action-link {{ 'active' if request.endpoint == 'chat_view' else '' }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
           <a href="{{ url_for('admin_emergencies') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_emergencies' else '' }}"><i class="bi bi-lightning-charge me-1"></i> SOS Logs</a>
           <a href="{{ url_for('admin_audit_logs') }}" class="nav-action-link {{ 'active' if request.endpoint == 'admin_audit_logs' else '' }}"><i class="bi bi-file-earmark-medical me-1"></i> Audit</a>
         {% endif %}
@@ -64,11 +69,13 @@
 
       <!-- Right: Utility Controls & User Profile -->
       <div class="nav-right-actions d-flex align-items-center gap-2">
-        <!-- Emergency 112 Direct Button -->
+        <!-- Emergency 112 Direct Button (Senior Citizen Only) -->
+        {% if current_role == 'senior' %}
         <a href="tel:112" class="sos-call-pill" title="Emergency Direct Call 112">
           <i class="bi bi-telephone-fill"></i>
           <span>112</span>
         </a>
+        {% endif %}
 
         <!-- Phone contact pill matching Senior Buddies image -->
         <a href="tel:2105550848" class="phone-pill d-none d-xxl-inline-flex">
@@ -86,17 +93,16 @@
         </a>
         {% endif %}
 
-        <!-- Theme Selector Dropdown -->
+        <!-- Theme Selector Dropdown (Light / Dark / Forest) -->
         <div class="dropdown">
-          <button class="nav-theme-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Theme & Colors">
+          <button class="nav-theme-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Change Theme & Appearance">
             <i class="bi bi-palette-fill text-info"></i>
             <span class="d-none d-sm-inline">Theme</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2" style="min-width: 190px;">
-            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('oceanic')"><span class="badge rounded-circle p-2" style="background: #0ea5e9;"> </span> Oceanic Cyan (Modern)</button></li>
-            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('forest')"><span class="badge rounded-circle p-2" style="background: #7bce29;"> </span> Forest & Lime (Classic)</button></li>
-            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('amber')"><span class="badge rounded-circle p-2" style="background: #f59e0b;"> </span> Warm Amber (Sunset)</button></li>
-            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('dark')"><span class="badge rounded-circle p-2" style="background: #1e293b;"> </span> Midnight Dark (Luxe)</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('light')"><i class="bi bi-sun-fill text-warning"></i> Light Mode</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('dark')"><i class="bi bi-moon-stars-fill text-info"></i> Dark Mode</button></li>
+            <li><button class="dropdown-item rounded-3 py-2 fw-semibold d-flex align-items-center gap-2" onclick="setAppTheme('forest')"><i class="bi bi-tree-fill text-success"></i> Forest & Lime</button></li>
           </ul>
         </div>
 
@@ -156,49 +162,51 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Floating 3D SOS Button (Always visible on all screens per PDF requirement) -->
+  <!-- Floating 3D SOS Button (Senior Citizen Only) -->
+  {% if current_role == 'senior' %}
   <div class="floating-sos-beacon">
     <a href="{{ url_for('senior_sos') }}" class="floating-sos-btn" title="Emergency SOS Call">
       <i class="bi bi-exclamation-diamond-fill"></i>
       <span class="label">SOS</span>
     </a>
   </div>
+  {% endif %}
 
   <!-- Footer with Senior Buddies aesthetic -->
-  <footer class="mt-5 py-5 text-white" style="background: var(--forest-950); border-top: 2px solid rgba(123, 206, 41, 0.3);">
+  <footer class="app-footer mt-5 py-5">
     <div class="container">
       <div class="row g-4 align-items-center">
         <div class="col-lg-6">
           <div class="d-flex align-items-center gap-2 mb-2">
-            <span class="dot bg-success" style="width: 14px; height: 14px; border-radius: 50%;"></span>
-            <span class="font-serif fs-2 fw-bold text-white">AGEWELL</span>
+            <span class="brand-aw-emblem" style="width: 38px; height: 38px; font-size: 1.1rem;">AW</span>
+            <span class="font-serif fs-2 fw-bold footer-brand-title">AGEWELL</span>
           </div>
-          <p class="text-white-50 mb-3" style="max-width: 480px;">
+          <p class="footer-desc mb-3" style="max-width: 480px;">
             Senior Independence Portal — Helping seniors live independently, safely and confidently. Connecting families, certified doctors, and caregivers with instant health oversight and emergency response.
           </p>
-          <div class="d-flex gap-2">
-            <span class="badge bg-dark border border-secondary text-white-50 px-3 py-2 rounded-pill">SQLite 14 Tables</span>
-            <span class="badge bg-dark border border-secondary text-white-50 px-3 py-2 rounded-pill">APScheduler 2-Min Escalation</span>
-            <span class="badge bg-dark border border-secondary text-white-50 px-3 py-2 rounded-pill">Three.js 3D Engine</span>
+          <div class="d-flex flex-wrap gap-2">
+            <span class="badge footer-pill-badge px-3 py-2 rounded-pill">SQLite 15 Tables</span>
+            <span class="badge footer-pill-badge px-3 py-2 rounded-pill">APScheduler Active</span>
+            <span class="badge footer-pill-badge px-3 py-2 rounded-pill">End-to-End Care Chat</span>
           </div>
         </div>
         <div class="col-lg-6 text-lg-end">
           <div class="mb-3">
-            <span class="text-white-50 d-block small text-uppercase fw-bold">Emergency Hotline:</span>
+            <span class="footer-sublabel d-block small text-uppercase fw-bold">Emergency Hotline Dispatch:</span>
             <a href="tel:112" class="call-112-btn mt-2">
               <i class="bi bi-telephone-fill"></i>
               <span>Call 112 Dispatch</span>
             </a>
           </div>
-          <p class="small text-white-50 mb-0">
-            Note: This portal helps in emergencies but does not replace official emergency services. Always keep the Call 112 button available.
+          <p class="small footer-sublabel mb-0">
+            Note: This portal connects designated caregivers and doctors, but does not replace official emergency services.
           </p>
         </div>
       </div>
-      <hr class="border-secondary my-4">
-      <div class="d-flex flex-wrap justify-content-between align-items-center small text-white-50">
+      <hr class="footer-hr my-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center small footer-copyright">
         <span>&copy; 2026 AGEWELL Senior Independence Portal. All rights reserved.</span>
-        <span>Built with Senior Accessibility, 3D Canvas Visuals & Role-Based Privacy.</span>
+        <span>Built with Senior Accessibility, High Contrast & Role-Based Privacy.</span>
       </div>
     </div>
   </footer>
