@@ -1,38 +1,13 @@
 // AGEWELL Senior Independence Portal - Main Client Script
 
 document.addEventListener('DOMContentLoaded', () => {
-  init3DTilt();
   initVoiceAssistant();
   initAccessibilityControls();
   initNotificationPolling();
+  initTheme();
 });
 
-// 1. 3D Tilt Effect on cards
-function init3DTilt() {
-  const cards = document.querySelectorAll('.card-3d, .medicine-card-3d, .service-num-card');
-  
-  cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      const rotateX = ((y - centerY) / centerY) * -7;
-      const rotateY = ((x - centerX) / centerX) * 7;
-      
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-    });
-    
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-    });
-  });
-}
-
-// 2. Web Audio Synthesizer for alerts
+// 1. Web Audio Synthesizer for alerts
 function playTone(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -192,7 +167,7 @@ function fillDemoLogin(role, autoSubmit = false) {
   }
 }
 
-// 8. Dynamic Theme Switcher System
+// 7. Dynamic Theme Switcher System
 function initTheme() {
   const savedTheme = localStorage.getItem('agewell_theme') || 'forest';
   setAppTheme(savedTheme, false);
@@ -209,51 +184,3 @@ window.setAppTheme = function(themeName, save = true) {
     playTone('success');
   }
 };
-
-// 9. Global Interactive 3D Container Spotlight & Touch Physics
-function initInteractive3DCards() {
-  const cards = document.querySelectorAll('.card-3d, .service-num-card');
-  cards.forEach((card) => {
-    card.addEventListener('pointermove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--mouse-x', `${x}px`);
-      card.style.setProperty('--mouse-y', `${y}px`);
-    });
-  });
-}
-
-// 10. Scroll-Triggered 3D Reveals (GPU-Accelerated)
-function initScrollReveals() {
-  const targets = document.querySelectorAll('.card-3d, .service-num-card');
-  if (!targets.length || !('IntersectionObserver' in window)) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
-  );
-
-  targets.forEach((el) => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) {
-      el.classList.add('is-visible');
-    } else {
-      el.classList.add('reveal-3d');
-      observer.observe(el);
-    }
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-  initInteractive3DCards();
-  initScrollReveals();
-});
