@@ -247,6 +247,14 @@ def init_db():
     )
     ''')
 
+    # Performance Indexes for Fast Lookups & High-Concurrency Emergency Tracking
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_alerts_senior_status ON emergency_alerts (senior_id, status)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_meds_senior_active ON medicines (senior_id, is_active)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_medlogs_senior_date ON medicine_logs (senior_id, scheduled_date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_checkins_senior_date ON daily_checkins (senior_id, checkin_date)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_messages_participants ON messages (sender_id, receiver_id, sent_at)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON notifications (user_id, is_read)')
+
     conn.commit()
     conn.close()
 
