@@ -1131,6 +1131,15 @@ def api_unread_count():
     conn.close()
     return jsonify({'count': count})
 
+@app.route('/api/session/heartbeat')
+def api_session_heartbeat():
+    is_authenticated = 'user_id' in session
+    return jsonify({
+        'authenticated': is_authenticated,
+        'user_id': session.get('user_id'),
+        'role': session.get('role')
+    })
+
 @app.route('/notifications')
 @login_required
 def notifications_view():
