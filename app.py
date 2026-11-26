@@ -505,6 +505,10 @@ def senior_sos():
     responder_name = None
     seconds_remaining = 120
     if active_alert:
+        active_alert = dict(active_alert)
+        max_step = len(contacts) + 1
+        active_alert['contact_escalation_step'] = min(active_alert.get('contact_escalation_step', 1) or 1, max_step)
+
         if active_alert['responded_by_user_id']:
             cursor.execute("SELECT name FROM users WHERE id = ?", (active_alert['responded_by_user_id'],))
             row = cursor.fetchone()

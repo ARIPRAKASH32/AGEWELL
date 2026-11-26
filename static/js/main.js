@@ -117,20 +117,35 @@ function initNotificationPolling() {
 }
 
 // 6. SOS Countdown & Escalation Simulator
-function initSOSCountdown(secondsRemaining, escalationStep, totalSteps) {
+function initSOSCountdown(secondsRemaining, escalationStep, totalSteps, isResponding = false) {
   const timerDisplay = document.getElementById('sos-countdown');
   const stepBadge = document.getElementById('escalation-step-badge');
   if (!timerDisplay) return;
 
+  if (isResponding) {
+    timerDisplay.innerText = "PAUSED";
+    timerDisplay.classList.remove('text-warning', 'text-danger');
+    timerDisplay.classList.add('text-success');
+    return;
+  }
+
   let left = secondsRemaining;
+  if (left <= 0) {
+    if (escalationStep >= totalSteps + 1) {
+      timerDisplay.innerText = "Dispatch Active";
+    } else {
+      timerDisplay.innerText = "Escalated";
+    }
+    return;
+  }
+
   const interval = setInterval(() => {
     if (left <= 0) {
       clearInterval(interval);
-      timerDisplay.innerText = "Escalating to next priority contact...";
-      playTone('sos');
+      timerDisplay.innerText = "Advancing to next contact...";
       setTimeout(() => {
         window.location.reload();
-      }, 1500);
+      }, 3000);
       return;
     }
     const mins = Math.floor(left / 60);
