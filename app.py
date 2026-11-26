@@ -250,10 +250,21 @@ def senior_checkin():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO daily_checkins (senior_id, checkin_date, checkin_time, status, note)
-        VALUES (?, ?, ?, 'ok', 'Pressed I am OK')
-        ON CONFLICT(senior_id, checkin_date) DO UPDATE SET checkin_time = ?, status = 'ok', note = 'Pressed I am OK'
-    """, (s_id, today_str, now_time, now_time))
+        SELECT id FROM daily_checkins WHERE senior_id = ? AND checkin_date = ?
+    """, (s_id, today_str))
+    existing = cursor.fetchone()
+
+    if existing:
+        cursor.execute("""
+            UPDATE daily_checkins
+            SET checkin_time = ?, status = 'ok', note = 'Pressed I am OK'
+            WHERE id = ?
+        """, (now_time, existing['id']))
+    else:
+        cursor.execute("""
+            INSERT INTO daily_checkins (senior_id, checkin_date, checkin_time, status, note)
+            VALUES (?, ?, ?, 'ok', 'Pressed I am OK')
+        """, (s_id, today_str, now_time))
     conn.commit()
 
     # Notify family members
